@@ -4,7 +4,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -22,18 +21,19 @@ public abstract class AbstractCommand {
 
 
     public SendMessage doActionAndGetMessage(Message message) {
-        System.out.println(message);
         String message1 = message.getText();
-        System.out.println(message1);
+        return new SendMessage(message.getChatId().toString(), getMessageText());
+    }
 
-        return new SendMessage(message.getChatId().toString(), message1);
+    protected String getMessageText() {
+        return "AbstractCommand";
     }
 
 
     private InlineKeyboardMarkup setInline() {
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         List<InlineKeyboardButton> buttons1 = new ArrayList<>();
-        InlineKeyboardButton button = new InlineKeyboardButton("–ö–Ω–æ–ø–∫–∞");
+        InlineKeyboardButton button = new InlineKeyboardButton(" ÌÓÔÍ‡");
         button.setCallbackData("skdfjhsdkfjshfkjshfkjhskdfjhskjfdhk");
         buttons1.add(button);
         buttons.add(buttons1);

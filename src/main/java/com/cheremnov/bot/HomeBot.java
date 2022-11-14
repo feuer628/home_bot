@@ -11,12 +11,19 @@ import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScope
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Properties;
+
 public class HomeBot extends TelegramLongPollingBot {
 
-    public HomeBot() {
-        try {
+    private final Properties config = new Properties();
+
+    public HomeBot(String configPath) {
+        try(FileReader fileReader = new FileReader(configPath)) {
+            config.load(fileReader);
             this.execute(new SetMyCommands(Commands.getMenuCommands(), new BotCommandScopeDefault(), null));
-        } catch (TelegramApiException e) {
+        } catch (TelegramApiException | IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -24,19 +31,18 @@ public class HomeBot extends TelegramLongPollingBot {
     public static void main(String[] args) {
         try {
             TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-            telegramBotsApi.registerBot(new HomeBot());
+            telegramBotsApi.registerBot(new HomeBot(args[0]));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public String getBotUsername() {
-        return "CheremnovHomeBot";
-        //return "tetriqwiexjvcs_bot";
+        return config.getProperty("botUsername");
     }
 
     public String getBotToken() {
-        return "";
+        return config.getProperty("botToken");
     }
 
     public void onUpdateReceived(Update update) {
