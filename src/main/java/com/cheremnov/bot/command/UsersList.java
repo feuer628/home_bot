@@ -1,18 +1,22 @@
 package com.cheremnov.bot.command;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Message;
+
+import java.util.List;
 
 public class UsersList extends AbstractCommand {
+    public UsersList(List<String> args) {
+        super(args);
+    }
+
     @Override
     public void checkRight() {
 
     }
 
     @Override
-    public SendMessage doActionAndGetMessage(Message message) {
-        super.doActionAndGetMessage(message);
-        return null;
+    public void doAction(SendMessage message) {
+        super.doAction(message);
     }
 
 }
