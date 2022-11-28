@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ChainCommandHandler {
+
+    public static final String PREVIOUS_COMMAND_CLASS = "previousCommandName";
     private static final Map<Long, ChainCommandData> chainUserCommand = new HashMap<>();
 
     public static boolean hasChainCommand(Long userId) {
@@ -19,11 +21,12 @@ public class ChainCommandHandler {
                 getDeclaredConstructor(Update.class, Map.class).newInstance(update, chainCommandData.accumulatorData);
     }
 
-    public static void setNextUserCommand(Long userId, Class<? extends AbstractCommand> nextCommand) {
+    public static void setNextUserCommand(Long userId, Class<? extends AbstractCommand> nextCommand, Class<? extends AbstractCommand> previousCommandClass) {
         ChainCommandData chainCommandData = chainUserCommand.get(userId);
         // если это не первая комманда из цепочки, карту с данными берем из предыдущей команды
         Map<String, String> accumulatorData =
                 chainCommandData == null ? new HashMap<>() : chainCommandData.accumulatorData;
+        accumulatorData.put(PREVIOUS_COMMAND_CLASS, previousCommandClass.getName());
         chainUserCommand.put(userId, new ChainCommandData(nextCommand, accumulatorData));
     }
 

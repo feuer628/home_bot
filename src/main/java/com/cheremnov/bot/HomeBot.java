@@ -6,7 +6,6 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -31,6 +30,7 @@ public class HomeBot extends TelegramLongPollingBot {
     public HomeBot(String configPath) {
         try (FileReader fileReader = new FileReader(configPath)) {
             config.load(fileReader);
+            // установка меню
             SetMyCommands menu = new SetMyCommands();
             menu.setCommands(Commands.getMenuCommands());
             execute(menu);
@@ -64,12 +64,6 @@ public class HomeBot extends TelegramLongPollingBot {
             if (update.hasCallbackQuery()) {
                 commandText = update.getCallbackQuery().getData();
                 message = update.getCallbackQuery().getMessage();
-                // удаляем кнопки если это запрос из копок
-                EditMessageText editMessageText = new EditMessageText(message.getText());
-                editMessageText.setChatId(message.getChatId());
-                editMessageText.setMessageId(message.getMessageId());
-                editMessageText.setReplyMarkup(null);
-                execute(editMessageText);
                 userId = update.getCallbackQuery().getFrom().getId();
             } else {
                 commandText = update.getMessage().getText();
@@ -78,14 +72,14 @@ public class HomeBot extends TelegramLongPollingBot {
             }
 
             AbstractCommand command;
-            // проверяем нет ли какой либо незавершонной цепочки комманд
+            // проверяем нет ли какой-либо незавершенной цепочки команд
             boolean hasChainCommand = ChainCommandHandler.hasChainCommand(userId);
             if (hasChainCommand) {
                 // если цепочки есть, берем следующую команду
                 command = ChainCommandHandler.getChainUserCommand(userId, update);
             } else {
                 // если цепочки нет, ищем новую команду
-                command = Commands.getCommandForMessage(message, commandText);
+                command = Commands.getCommandForMessage(commandText);
             }
 
             SendMessage sendMessage = new SendMessage();
@@ -98,7 +92,7 @@ public class HomeBot extends TelegramLongPollingBot {
                         ChainCommandHandler.clearChainCommand(userId);
                     }
                 } else {
-                    ChainCommandHandler.setNextUserCommand(userId, nextCommand);
+                    ChainCommandHandler.setNextUserCommand(userId, nextCommand, command.getClass());
                 }
                 Objects.requireNonNull(sendMessage.getText(), "Не установлен текст сообщения для команды " + commandText);
             } else {

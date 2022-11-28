@@ -12,6 +12,10 @@ public abstract class AbstractCommand {
     protected final List<String> args;
     protected String commandName;
 
+    public String getCommandName() {
+        return commandName;
+    }
+
     public AbstractCommand() {
         this(null);
     }
@@ -31,6 +35,11 @@ public abstract class AbstractCommand {
 
     public void doAction(SendMessage message) {
         message.setText(getMessageText());
+        additionalAction();
+    }
+
+    protected void additionalAction() {
+
     }
 
     protected String getMessageText() {

@@ -1,7 +1,6 @@
 package com.cheremnov.bot.command;
 
 import com.cheremnov.bot.command.add_user.AddUser;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 
 import java.util.ArrayList;
@@ -36,7 +35,7 @@ public enum Commands {
         this.hidden = hidden;
     }
 
-    public static AbstractCommand getCommandForMessage(Message message, String command) {
+    public static AbstractCommand getCommandForMessage(String command) {
         System.out.println("command = " + command);
         for (Commands commands : values()) {
             if (command.startsWith(commands.commandName)) {
