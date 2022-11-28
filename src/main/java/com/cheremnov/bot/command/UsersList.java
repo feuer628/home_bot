@@ -5,13 +5,10 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import java.util.List;
 
 public class UsersList extends AbstractCommand {
+    public static final String COMMAND_NAME = "list_user";
+
     public UsersList(List<String> args) {
-        super(args);
-    }
-
-    @Override
-    public void checkRight() {
-
+        super(COMMAND_NAME, args);
     }
 
     @Override

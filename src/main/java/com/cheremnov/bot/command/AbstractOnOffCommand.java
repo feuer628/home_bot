@@ -5,21 +5,23 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractOnOffCommand extends AbstractCommand {
 
-    public AbstractOnOffCommand(List<String> args) {
-        super(args);
+    public AbstractOnOffCommand(String commandName, List<String> args) {
+        super(commandName, args);
     }
 
     @Override
     public void doAction(SendMessage message) {
-        if (args.size() == 1) {
+        if (args.isEmpty()) {
             message.setText(getMessageText());
             message.setReplyMarkup(getInlineBottomOnOff());
         } else {
-            if ("on".equalsIgnoreCase(args.get(1))) {
+            if ("on".equalsIgnoreCase(args.get(0))) {
                 on(message);
             } else {
                 off(message);
@@ -31,19 +33,12 @@ public abstract class AbstractOnOffCommand extends AbstractCommand {
     abstract void off(SendMessage message);
 
     private InlineKeyboardMarkup getInlineBottomOnOff() {
-        List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
-        List<InlineKeyboardButton> row = new ArrayList<>();
-        InlineKeyboardButton on = new InlineKeyboardButton("Вкл");
-        on.setText("Включить");
-        on.setCallbackData(args.get(0) + " on");
-        InlineKeyboardButton off = new InlineKeyboardButton("Выкл");
-        off.setText("Выключить");
-        off.setCallbackData(args.get(0) + " off");
-        row.add(on);
-        row.add(off);
-        buttons.add(row);
+        InlineKeyboardButton on = new InlineKeyboardButton("Включить");
+        on.setCallbackData(commandName + " on");
+        InlineKeyboardButton off = new InlineKeyboardButton("Выключить");
+        off.setCallbackData(commandName + " off");
         InlineKeyboardMarkup markupKeyboard = new InlineKeyboardMarkup();
-        markupKeyboard.setKeyboard(buttons);
+        markupKeyboard.setKeyboard(Collections.singletonList(Arrays.asList(on, off)));
         return markupKeyboard;
     }
 }

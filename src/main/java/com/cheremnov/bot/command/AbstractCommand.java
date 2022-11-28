@@ -2,23 +2,31 @@ package com.cheremnov.bot.command;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public abstract class AbstractCommand {
 
-    List<Long> trustedUsers = new LinkedList<>();
+    protected final Map<Long, String> trustedUsers = new HashMap<>(Collections.singletonMap(SUPER_ADMIN_ID, "Админ"));
 
-    long SUPER_ADMIN_ID = 410563696;
+    private static final long SUPER_ADMIN_ID = 410563696;
     protected final List<String> args;
+    protected String commandName;
 
-    public AbstractCommand(List<String> args) {
+    public AbstractCommand() {
+        this(null);
+    }
 
+    public AbstractCommand(String commandName) {
+        this(commandName, Collections.emptyList());
+    }
+
+    public AbstractCommand(String commandName, List<String> args) {
+        this.commandName = commandName;
         this.args = args;
     }
 
-    public void checkRight() {
-
+    public boolean checkRight(Long id) {
+        return trustedUsers.containsKey(id);
     }
 
     public void doAction(SendMessage message) {
@@ -27,5 +35,9 @@ public abstract class AbstractCommand {
 
     protected String getMessageText() {
         return "?????????????";
+    }
+
+    public Class<? extends AbstractCommand> nextCommand() {
+        return null;
     }
 }

@@ -6,8 +6,10 @@ import java.util.List;
 
 public class Water extends AbstractOnOffCommand {
 
+    public static final String COMMAND_NAME = "water";
+
     public Water(List<String> args) {
-        super(args);
+        super(COMMAND_NAME, args);
     }
 
     @Override

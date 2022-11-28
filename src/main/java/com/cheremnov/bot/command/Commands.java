@@ -1,5 +1,7 @@
 package com.cheremnov.bot.command;
 
+import com.cheremnov.bot.command.add_user.AddUser;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 
 import java.util.ArrayList;
@@ -8,15 +10,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public enum Commands {
-    WATER("/water", "Управление водой", Water.class),
-    ELECTRIC("/electric", "Управление электричеством", Electric.class),
-    GAS("/gas", "Управление газом", Gas.class),
-    REGISTER_USER("/list_user", "Список пользователей", UsersList.class),
-    ADD_USER("/add_user", "Добавление пользователя", AddUser.class),
-    DEL_USER("/del_user", "Удаление пользователя", DelUser.class),
-    INFO("/info", "Информация о боте", Info.class),
-    HELP("/help", "Основные команды бота", Help.class);
-    //UNKNOWN("/unknown", "", Unknown.class, true);
+    WATER(Water.COMMAND_NAME, "Управление водой", Water.class),
+    ELECTRIC(Electric.COMMAND_NAME, "Управление электричеством", Electric.class),
+    GAS(Gas.COMMAND_NAME, "Управление газом", Gas.class),
+    REGISTER_USER(UsersList.COMMAND_NAME, "Список пользователей", UsersList.class),
+    ADD_USER(AddUser.COMMAND_NAME, "Добавление пользователя", AddUser.class),
+    DEL_USER(DelUser.COMMAND_NAME, "Удаление пользователя", DelUser.class),
+    INFO(Info.COMMAND_NAME, "Информация о боте", Info.class),
+    HELP(Help.COMMAND_NAME, "Основные команды бота", Help.class);
 
     private final String commandName;
     private final String description;
@@ -35,13 +36,13 @@ public enum Commands {
         this.hidden = hidden;
     }
 
-    public static AbstractCommand getCommandForMessage(String command) {
+    public static AbstractCommand getCommandForMessage(Message message, String command) {
         System.out.println("command = " + command);
         for (Commands commands : values()) {
             if (command.startsWith(commands.commandName)) {
                 try {
                     List<String> args =
-                            Arrays.stream(command.trim().split(" ")).
+                            Arrays.stream(command.replace(commands.commandName, "").trim().split(" ")).
                                     filter(s -> !s.isEmpty()).collect(Collectors.toList());
 
                     return commands.commandClass.getDeclaredConstructor(List.class).newInstance(args);
@@ -50,7 +51,6 @@ public enum Commands {
                 }
             }
         }
-        System.out.println("Unknown command " + command);
         return new Unknown(command);
     }
 
