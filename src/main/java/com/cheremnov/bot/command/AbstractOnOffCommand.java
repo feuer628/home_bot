@@ -11,18 +11,37 @@ import java.util.List;
 
 public abstract class AbstractOnOffCommand extends AbstractCommand {
 
+    private boolean isFullCommand;
+
+    private boolean isOn;
+
     public AbstractOnOffCommand(String commandName, List<String> args) {
         super(commandName, args);
     }
 
     @Override
-    public void doAction(SendMessage message) {
+    public void parseAndCheckArgs() {
         if (args.isEmpty()) {
+            return;
+        }
+        if (args.size() != 1) {
+            throw new IllegalArgumentException("Допустимо передавать только один аргумент");
+        }
+        String arg = args.get(0);
+        if (!"on".equalsIgnoreCase(arg) && !"off".equalsIgnoreCase(arg)) {
+            throw new IllegalArgumentException("Поддерживаемые аргументы комманды " + commandName + ": on/off");
+        }
+        isOn = "on".equalsIgnoreCase(arg);
+        isFullCommand = true;
+    }
+
+    @Override
+    public void doAction(SendMessage message) {
+        if (!isFullCommand) {
             message.setText(getMessageText());
             message.setReplyMarkup(getInlineBottomOnOff());
-
         } else {
-            if ("on".equalsIgnoreCase(args.get(0))) {
+            if (isOn) {
                 on(message);
             } else {
                 off(message);
@@ -31,6 +50,7 @@ public abstract class AbstractOnOffCommand extends AbstractCommand {
     }
 
     abstract void on(SendMessage message);
+
     abstract void off(SendMessage message);
 
     private ReplyKeyboardMarkup getInlineBottomOnOff() {
@@ -44,6 +64,6 @@ public abstract class AbstractOnOffCommand extends AbstractCommand {
 
     @Override
     public Class<? extends AbstractCommand> nextCommand() {
-        return OnOffCommandHandler.class;
+        return isFullCommand ? null : OnOffCommandHandler.class;
     }
 }

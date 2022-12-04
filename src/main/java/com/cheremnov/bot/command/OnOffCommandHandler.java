@@ -28,6 +28,7 @@ public class OnOffCommandHandler extends AbstractChainCommand {
             };
             Class<? extends AbstractOnOffCommand> onOffCommandClass = (Class<? extends AbstractOnOffCommand>) Class.forName(accumulatorData.get(ChainCommandHandler.PREVIOUS_COMMAND_CLASS));
             AbstractOnOffCommand onOffCommand = onOffCommandClass.getDeclaredConstructor(List.class).newInstance(Collections.singletonList(action));
+            onOffCommand.parseAndCheckArgs();
             onOffCommand.doAction(message);
         } catch (Exception e) {
             throw new RuntimeException(e);

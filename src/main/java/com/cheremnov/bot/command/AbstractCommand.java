@@ -33,6 +33,10 @@ public abstract class AbstractCommand {
         return trustedUsers.containsKey(id);
     }
 
+    public void parseAndCheckArgs() {
+
+    }
+
     public void doAction(SendMessage message) {
         message.setText(getMessageText());
         additionalAction();

@@ -22,11 +22,6 @@ public class HomeBot extends TelegramLongPollingBot {
 
     private final Properties config = new Properties();
 
-    @Override
-    public void clearWebhook() throws TelegramApiRequestException {
-        WebhookUtils.clearWebhook(this);
-    }
-
     public HomeBot(String configPath) {
         try (FileReader fileReader = new FileReader(configPath)) {
             config.load(fileReader);
@@ -48,6 +43,11 @@ public class HomeBot extends TelegramLongPollingBot {
         }
     }
 
+    @Override
+    public void clearWebhook() throws TelegramApiRequestException {
+        WebhookUtils.clearWebhook(this);
+    }
+
     public String getBotUsername() {
         return config.getProperty("botUsername");
     }
@@ -57,10 +57,12 @@ public class HomeBot extends TelegramLongPollingBot {
     }
 
     public void onUpdateReceived(Update update) {
+
+        String commandText;
+        Message message;
+        Long userId;
+        SendMessage sendMessage = new SendMessage();
         try {
-            String commandText;
-            Message message;
-            Long userId;
             if (update.hasCallbackQuery()) {
                 commandText = update.getCallbackQuery().getData();
                 message = update.getCallbackQuery().getMessage();
@@ -70,6 +72,7 @@ public class HomeBot extends TelegramLongPollingBot {
                 message = update.getMessage();
                 userId = update.getMessage().getFrom().getId();
             }
+            sendMessage.setChatId(message.getChatId());
 
             AbstractCommand command;
             // провер€ем нет ли какой-либо незавершенной цепочки команд
@@ -82,9 +85,8 @@ public class HomeBot extends TelegramLongPollingBot {
                 command = Commands.getCommandForMessage(commandText);
             }
 
-            SendMessage sendMessage = new SendMessage();
-            sendMessage.setChatId(message.getChatId());
             if (command.checkRight(userId)) {
+                command.parseAndCheckArgs();
                 command.doAction(sendMessage);
                 Class<? extends AbstractCommand> nextCommand = command.nextCommand();
                 if (nextCommand == null) {
@@ -98,9 +100,15 @@ public class HomeBot extends TelegramLongPollingBot {
             } else {
                 sendMessage.setText("” вас нет прав дл€ выполнени€ этого запроса");
             }
+
             execute(sendMessage);
         } catch (Exception e) {
-            e.printStackTrace();
+            sendMessage.setText("ќшибка при выполнении запроса:\n" + e.getMessage());
+            try {
+                execute(sendMessage);
+            } catch (TelegramApiException ex) {
+                e.printStackTrace();
+            }
         }
 
     }
