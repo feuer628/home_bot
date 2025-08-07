@@ -10,7 +10,7 @@ import java.util.List;
  * Date: 14.11.2022
  */
 public class AddUser extends AbstractCommand {
-    public static final String COMMAND_NAME = "add_user";
+    public static final String COMMAND_NAME = "/add_user";
 
     private boolean needChain;
 

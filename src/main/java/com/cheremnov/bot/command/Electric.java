@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Electric extends AbstractOnOffCommand {
 
-    public static final String COMMAND_NAME = "electric";
+    public static final String COMMAND_NAME = "/electric";
 
     public Electric(List<String> args) {
         super(COMMAND_NAME, args);

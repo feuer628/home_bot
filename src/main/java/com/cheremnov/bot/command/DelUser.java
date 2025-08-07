@@ -7,7 +7,7 @@ import java.util.List;
  *         Date: 14.11.2022
  */
 public class DelUser extends AbstractCommand {
-    public static final String COMMAND_NAME = "del_user";
+    public static final String COMMAND_NAME = "/del_user";
 
     public DelUser(List<String> args) {
         super(COMMAND_NAME, args);

@@ -7,7 +7,7 @@ import java.util.List;
  *         Date: 14.11.2022
  */
 public class Info extends AbstractCommand {
-    public static final String COMMAND_NAME = "info";
+    public static final String COMMAND_NAME = "/info";
 
     public Info(List<String> args) {
         super(COMMAND_NAME, args);
