@@ -11,7 +11,7 @@ public class Unknown extends AbstractCommand {
 
     @Override
     protected String getMessageText() {
-        return MessageFormat.format("Неизвестная команда \"{0}\". " +
-                "\nДля получения дополнительных сведений введите команду /help", commandName);
+        return MessageFormat.format("РќРµРёР·РІРµСЃС‚РЅР°СЏ РєРѕРјР°РЅРґР° \"{0}\". " +
+                "\nР”Р»СЏ РїРѕР»СѓС‡РµРЅРёСЏ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹С… СЃРІРµРґРµРЅРёР№ РІРІРµРґРёС‚Рµ РєРѕРјР°РЅРґСѓ /help", commandName);
     }
 }

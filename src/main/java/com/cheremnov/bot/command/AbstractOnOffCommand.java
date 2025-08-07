@@ -25,11 +25,11 @@ public abstract class AbstractOnOffCommand extends AbstractCommand {
             return;
         }
         if (args.size() != 1) {
-            throw new IllegalArgumentException("Допустимо передавать только один аргумент");
+            throw new IllegalArgumentException("Р”РѕРїСѓСЃС‚РёРјРѕ РїРµСЂРµРґР°РІР°С‚СЊ С‚РѕР»СЊРєРѕ РѕРґРёРЅ Р°СЂРіСѓРјРµРЅС‚");
         }
         String arg = args.get(0);
         if (!"on".equalsIgnoreCase(arg) && !"off".equalsIgnoreCase(arg)) {
-            throw new IllegalArgumentException("Поддерживаемые аргументы комманды " + commandName + ": on/off");
+            throw new IllegalArgumentException("РџРѕРґРґРµСЂР¶РёРІР°РµРјС‹Рµ Р°СЂРіСѓРјРµРЅС‚С‹ РєРѕРјРјР°РЅРґС‹ " + commandName + ": on/off");
         }
         isOn = "on".equalsIgnoreCase(arg);
         isFullCommand = true;
@@ -54,8 +54,8 @@ public abstract class AbstractOnOffCommand extends AbstractCommand {
     abstract void off(SendMessage message);
 
     private ReplyKeyboardMarkup getInlineBottomOnOff() {
-        KeyboardButton on = new KeyboardButton("Включить");
-        KeyboardButton off = new KeyboardButton("Выключить");
+        KeyboardButton on = new KeyboardButton("Р’РєР»СЋС‡РёС‚СЊ");
+        KeyboardButton off = new KeyboardButton("Р’С‹РєР»СЋС‡РёС‚СЊ");
         ReplyKeyboardMarkup markupKeyboard = new ReplyKeyboardMarkup();
         markupKeyboard.setOneTimeKeyboard(true);
         markupKeyboard.setKeyboard(Collections.singletonList(new KeyboardRow(Arrays.asList(on, off))));

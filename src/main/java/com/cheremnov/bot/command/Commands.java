@@ -9,14 +9,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public enum Commands {
-    WATER(Water.COMMAND_NAME, "Управление водой", Water.class),
-    ELECTRIC(Electric.COMMAND_NAME, "Управление электричеством", Electric.class),
-    GAS(Gas.COMMAND_NAME, "Управление газом", Gas.class),
-    REGISTER_USER(UsersList.COMMAND_NAME, "Список пользователей", UsersList.class),
-    ADD_USER(AddUser.COMMAND_NAME, "Добавление пользователя", AddUser.class),
-    DEL_USER(DelUser.COMMAND_NAME, "Удаление пользователя", DelUser.class),
-    INFO(Info.COMMAND_NAME, "Информация о боте", Info.class),
-    HELP(Help.COMMAND_NAME, "Основные команды бота", Help.class);
+    WATER(Water.COMMAND_NAME, "РЈРїСЂР°РІР»РµРЅРёРµ РІРѕРґРѕР№", Water.class),
+    ELECTRIC(Electric.COMMAND_NAME, "РЈРїСЂР°РІР»РµРЅРёРµ СЌР»РµРєС‚СЂРёС‡РµСЃС‚РІРѕРј", Electric.class),
+    GAS(Gas.COMMAND_NAME, "РЈРїСЂР°РІР»РµРЅРёРµ РіР°Р·РѕРј", Gas.class),
+    REGISTER_USER(UsersList.COMMAND_NAME, "РЎРїРёСЃРѕРє РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№", UsersList.class),
+    ADD_USER(AddUser.COMMAND_NAME, "Р”РѕР±Р°РІР»РµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ", AddUser.class),
+    DEL_USER(DelUser.COMMAND_NAME, "РЈРґР°Р»РµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ", DelUser.class),
+    INFO(Info.COMMAND_NAME, "РРЅС„РѕСЂРјР°С†РёСЏ Рѕ Р±РѕС‚Рµ", Info.class),
+    HELP(Help.COMMAND_NAME, "РћСЃРЅРѕРІРЅС‹Рµ РєРѕРјР°РЅРґС‹ Р±РѕС‚Р°", Help.class);
 
     private final String commandName;
     private final String description;

@@ -15,6 +15,6 @@ public class Help extends AbstractCommand {
 
     @Override
     protected String getMessageText() {
-        return "Для управления автоматикой...\nДля получения сведений...";
+        return "Р”Р»СЏ СѓРїСЂР°РІР»РµРЅРёСЏ Р°РІС‚РѕРјР°С‚РёРєРѕР№...\nР”Р»СЏ РїРѕР»СѓС‡РµРЅРёСЏ СЃРІРµРґРµРЅРёР№...";
     }
 }

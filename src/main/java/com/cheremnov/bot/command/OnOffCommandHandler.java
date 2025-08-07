@@ -22,8 +22,8 @@ public class OnOffCommandHandler extends AbstractChainCommand {
     public void doAction(SendMessage message) {
         try {
             String action = switch (update.getMessage().getText()) {
-                case "Âêëþ÷èòü" -> "on";
-                case "Âûêëþ÷èòü" -> "off";
+                case "Ð’ÐºÐ»ÑŽÑ‡Ð¸Ñ‚ÑŒ" -> "on";
+                case "Ð’Ñ‹ÐºÐ»ÑŽÑ‡Ð¸Ñ‚ÑŒ" -> "off";
                 default -> throw new IllegalStateException("Unexpected value: " + update.getMessage().getText());
             };
             Class<? extends AbstractOnOffCommand> onOffCommandClass = (Class<? extends AbstractOnOffCommand>) Class.forName(accumulatorData.get(ChainCommandHandler.PREVIOUS_COMMAND_CLASS));

@@ -22,7 +22,7 @@ public class SetUserDescriptionCommand extends AbstractChainCommand {
 
     @Override
     protected String getMessageText() {
-        return "Введите псевдоним для добавляемого пользователя";
+        return "Р’РІРµРґРёС‚Рµ РїСЃРµРІРґРѕРЅРёРј РґР»СЏ РґРѕР±Р°РІР»СЏРµРјРѕРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ";
     }
 
     @Override

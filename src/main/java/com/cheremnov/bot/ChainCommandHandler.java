@@ -23,7 +23,7 @@ public class ChainCommandHandler {
 
     public static void setNextUserCommand(Long userId, Class<? extends AbstractCommand> nextCommand, Class<? extends AbstractCommand> previousCommandClass) {
         ChainCommandData chainCommandData = chainUserCommand.get(userId);
-        // если это не первая комманда из цепочки, карту с данными берем из предыдущей команды
+        // РµСЃР»Рё СЌС‚Рѕ РЅРµ РїРµСЂРІР°СЏ РєРѕРјРјР°РЅРґР° РёР· С†РµРїРѕС‡РєРё, РєР°СЂС‚Сѓ СЃ РґР°РЅРЅС‹РјРё Р±РµСЂРµРј РёР· РїСЂРµРґС‹РґСѓС‰РµР№ РєРѕРјР°РЅРґС‹
         Map<String, String> accumulatorData =
                 chainCommandData == null ? new HashMap<>() : chainCommandData.accumulatorData;
         accumulatorData.put(PREVIOUS_COMMAND_CLASS, previousCommandClass.getName());

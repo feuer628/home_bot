@@ -25,7 +25,7 @@ public class AnswerYesNoQuestions extends AbstractChainCommand {
 
     @Override
     protected String getMessageText() {
-        return isYes ? "Введите псевдоним для добавляемого пользователя": "Команда отменена";
+        return isYes ? "Р’РІРµРґРёС‚Рµ РїСЃРµРІРґРѕРЅРёРј РґР»СЏ РґРѕР±Р°РІР»СЏРµРјРѕРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ": "РљРѕРјР°РЅРґР° РѕС‚РјРµРЅРµРЅР°";
     }
 
     @Override

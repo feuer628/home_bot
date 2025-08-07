@@ -25,6 +25,6 @@ public class AddUserFromChain extends AbstractChainCommand {
 
     @Override
     protected String getMessageText() {
-        return "Пользователь " + trustedUserDescription + " (" + trustedUserId + ") успешно добавлен с список доверенных";
+        return "РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ " + trustedUserDescription + " (" + trustedUserId + ") СѓСЃРїРµС€РЅРѕ РґРѕР±Р°РІР»РµРЅ СЃ СЃРїРёСЃРѕРє РґРѕРІРµСЂРµРЅРЅС‹С…";
     }
 }

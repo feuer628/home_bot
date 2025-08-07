@@ -36,9 +36,9 @@ public class YesNoCommand extends AbstractCommand {
     }
 
     private InlineKeyboardMarkup getInlineBottomOnOff() {
-        InlineKeyboardButton yes = new InlineKeyboardButton("Да");
+        InlineKeyboardButton yes = new InlineKeyboardButton("Р”Р°");
         yes.setCallbackData("yes");
-        InlineKeyboardButton no = new InlineKeyboardButton("Нет");
+        InlineKeyboardButton no = new InlineKeyboardButton("РќРµС‚");
         no.setCallbackData("no");
         InlineKeyboardMarkup markupKeyboard = new InlineKeyboardMarkup();
         markupKeyboard.setKeyboard(Collections.singletonList(Arrays.asList(yes, no)));

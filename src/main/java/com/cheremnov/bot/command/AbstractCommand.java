@@ -6,7 +6,7 @@ import java.util.*;
 
 public abstract class AbstractCommand {
 
-    protected final Map<Long, String> trustedUsers = new HashMap<>(Collections.singletonMap(SUPER_ADMIN_ID, "¿‰ÏËÌ"));
+    protected final Map<Long, String> trustedUsers = new HashMap<>(Collections.singletonMap(SUPER_ADMIN_ID, "–ê–¥–º–∏–Ω"));
 
     private static final long SUPER_ADMIN_ID = 410563696;
     protected final List<String> args;

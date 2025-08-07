@@ -14,16 +14,16 @@ public class Electric extends AbstractOnOffCommand {
 
     @Override
     protected String getMessageText() {
-        return "Что нужно сделать с электричеством?";
+        return "Р§С‚Рѕ РЅСѓР¶РЅРѕ СЃРґРµР»Р°С‚СЊ СЃ СЌР»РµРєС‚СЂРёС‡РµСЃС‚РІРѕРј?";
     }
 
     @Override
     void on(SendMessage message) {
-        message.setText("Электричество включено");
+        message.setText("Р­Р»РµРєС‚СЂРёС‡РµСЃС‚РІРѕ РІРєР»СЋС‡РµРЅРѕ");
     }
 
     @Override
     void off(SendMessage message) {
-        message.setText("Электричество выключено");
+        message.setText("Р­Р»РµРєС‚СЂРёС‡РµСЃС‚РІРѕ РІС‹РєР»СЋС‡РµРЅРѕ");
     }
 }

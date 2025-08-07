@@ -25,7 +25,7 @@ public class HomeBot extends TelegramLongPollingBot {
     public HomeBot(String configPath) {
         try (FileReader fileReader = new FileReader(configPath)) {
             config.load(fileReader);
-            // установка меню
+            // СѓСЃС‚Р°РЅРѕРІРєР° РјРµРЅСЋ
             SetMyCommands menu = new SetMyCommands();
             menu.setCommands(Commands.getMenuCommands());
             execute(menu);
@@ -39,7 +39,7 @@ public class HomeBot extends TelegramLongPollingBot {
             TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
             telegramBotsApi.registerBot(new HomeBot(args[0]));
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -75,13 +75,13 @@ public class HomeBot extends TelegramLongPollingBot {
             sendMessage.setChatId(message.getChatId());
 
             AbstractCommand command;
-            // проверяем нет ли какой-либо незавершенной цепочки команд
+            // РїСЂРѕРІРµСЂСЏРµРј РЅРµС‚ Р»Рё РєР°РєРѕР№-Р»РёР±Рѕ РЅРµР·Р°РІРµСЂС€РµРЅРЅРѕР№ С†РµРїРѕС‡РєРё РєРѕРјР°РЅРґ
             boolean hasChainCommand = ChainCommandHandler.hasChainCommand(userId);
             if (hasChainCommand) {
-                // если цепочки есть, берем следующую команду
+                // РµСЃР»Рё С†РµРїРѕС‡РєРё РµСЃС‚СЊ, Р±РµСЂРµРј СЃР»РµРґСѓСЋС‰СѓСЋ РєРѕРјР°РЅРґСѓ
                 command = ChainCommandHandler.getChainUserCommand(userId, update);
             } else {
-                // если цепочки нет, ищем новую команду
+                // РµСЃР»Рё С†РµРїРѕС‡РєРё РЅРµС‚, РёС‰РµРј РЅРѕРІСѓСЋ РєРѕРјР°РЅРґСѓ
                 command = Commands.getCommandForMessage(commandText);
             }
 
@@ -96,18 +96,18 @@ public class HomeBot extends TelegramLongPollingBot {
                 } else {
                     ChainCommandHandler.setNextUserCommand(userId, nextCommand, command.getClass());
                 }
-                Objects.requireNonNull(sendMessage.getText(), "Не установлен текст сообщения для команды " + commandText);
+                Objects.requireNonNull(sendMessage.getText(), "РќРµ СѓСЃС‚Р°РЅРѕРІР»РµРЅ С‚РµРєСЃС‚ СЃРѕРѕР±С‰РµРЅРёСЏ РґР»СЏ РєРѕРјР°РЅРґС‹ " + commandText);
             } else {
-                sendMessage.setText("У вас нет прав для выполнения этого запроса");
+                sendMessage.setText("РЈ РІР°СЃ РЅРµС‚ РїСЂР°РІ РґР»СЏ РІС‹РїРѕР»РЅРµРЅРёСЏ СЌС‚РѕРіРѕ Р·Р°РїСЂРѕСЃР°");
             }
 
             execute(sendMessage);
         } catch (Exception e) {
-            sendMessage.setText("Ошибка при выполнении запроса:\n" + e.getMessage());
+            sendMessage.setText("РћС€РёР±РєР° РїСЂРё РІС‹РїРѕР»РЅРµРЅРёРё Р·Р°РїСЂРѕСЃР°:\n" + e.getMessage());
             try {
                 execute(sendMessage);
             } catch (TelegramApiException ex) {
-                e.printStackTrace();
+                throw new RuntimeException(ex);
             }
         }
 

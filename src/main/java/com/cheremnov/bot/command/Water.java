@@ -14,16 +14,16 @@ public class Water extends AbstractOnOffCommand {
 
     @Override
     protected String getMessageText() {
-        return "Что нужно сделать с водой?";
+        return "Р§С‚Рѕ РЅСѓР¶РЅРѕ СЃРґРµР»Р°С‚СЊ СЃ РІРѕРґРѕР№?";
     }
 
     @Override
     void on(SendMessage message) {
-        message.setText("Вода включена");
+        message.setText("Р’РѕРґР° РІРєР»СЋС‡РµРЅР°");
     }
 
     @Override
     void off(SendMessage message) {
-        message.setText("Вода выключена");
+        message.setText("Р’РѕРґР° РІС‹РєР»СЋС‡РµРЅР°");
     }
 }

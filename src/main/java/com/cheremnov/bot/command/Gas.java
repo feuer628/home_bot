@@ -14,16 +14,16 @@ public class Gas extends AbstractOnOffCommand {
 
     @Override
     protected String getMessageText() {
-        return "Что нужно сделать с газом?";
+        return "Р§С‚Рѕ РЅСѓР¶РЅРѕ СЃРґРµР»Р°С‚СЊ СЃ РіР°Р·РѕРј?";
     }
 
     @Override
     void on(SendMessage message) {
-        message.setText("Газ включен");
+        message.setText("Р“Р°Р· РІРєР»СЋС‡РµРЅ");
     }
 
     @Override
     void off(SendMessage message) {
-        message.setText("Газ выключен");
+        message.setText("Р“Р°Р· РІС‹РєР»СЋС‡РµРЅ");
     }
 }

@@ -27,9 +27,9 @@ public class HandleReplayMessage extends AbstractChainCommand {
             String user = trustedUsers.get(userId);
             if (user == null) {
                 String pattern = """
-                        Вы дествительно хотете добавить пользователя
-                        ФИО: {0}
-                        {1}в список доверенных пользователей?""";
+                        Р’С‹ РґРµСЃС‚РІРёС‚РµР»СЊРЅРѕ С…РѕС‚РµС‚Рµ РґРѕР±Р°РІРёС‚СЊ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+                        Р¤РРћ: {0}
+                        {1}РІ СЃРїРёСЃРѕРє РґРѕРІРµСЂРµРЅРЅС‹С… РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№?""";
                 String fio = forwardUser.getFirstName() + " "+  forwardUser.getLastName();
                 String userName = forwardUser.getUserName() == null ?
                         "" : "UserName: @" + forwardUser.getUserName() + "\n";
@@ -37,7 +37,7 @@ public class HandleReplayMessage extends AbstractChainCommand {
                 accumulatorData.put(ADDED_USR_ID, String.valueOf(userId));
                 userAdd = true;
             } else {
-                message.setText("Пользователь " + user + " (" + userId + ") уже был добавлен в список доверенных");
+                message.setText("РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ " + user + " (" + userId + ") СѓР¶Рµ Р±С‹Р» РґРѕР±Р°РІР»РµРЅ РІ СЃРїРёСЃРѕРє РґРѕРІРµСЂРµРЅРЅС‹С…");
             }
         }
     }
