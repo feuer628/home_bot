@@ -7,55 +7,42 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.MaybeInaccessibleMessage;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import org.telegram.telegrambots.util.WebhookUtils;
 
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Objects;
-import java.util.Properties;
 
 public class HomeBot extends TelegramLongPollingBot {
 
-    private final Properties config = new Properties();
-
-    public HomeBot(String configPath) {
-        try (FileReader fileReader = new FileReader(configPath)) {
-            config.load(fileReader);
+    public HomeBot(String botToken) {
+        super(botToken);
+        try {
             // установка меню
             SetMyCommands menu = new SetMyCommands();
             menu.setCommands(Commands.getMenuCommands());
             execute(menu);
-        } catch (TelegramApiException | IOException e) {
+        } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
     }
 
     public static void main(String[] args) {
         try {
+            String botToken = args[0];
             TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-            telegramBotsApi.registerBot(new HomeBot(args[0]));
+            telegramBotsApi.registerBot(new HomeBot(botToken));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    @Override
-    public void clearWebhook() throws TelegramApiRequestException {
-        WebhookUtils.clearWebhook(this);
-    }
-
     public String getBotUsername() {
-        return config.getProperty("botUsername");
+        return "CheremnovBot";
     }
 
-    public String getBotToken() {
-        return config.getProperty("botToken");
-    }
 
     public void onUpdateReceived(Update update) {
 
