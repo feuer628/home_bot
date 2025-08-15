@@ -19,7 +19,7 @@ public interface ICallbackHandler {
     default String getCallbackInfo(CallbackQuery callback) {
         String data = callback.getData();
         int indexOf = data.indexOf(':');
-        return indexOf >= 0 ? data.substring(indexOf) : null;
+        return indexOf >= 0 ? data.substring(indexOf + 1) : null;
     }
 
     void handle(CallbackQuery callback, Bot bot);

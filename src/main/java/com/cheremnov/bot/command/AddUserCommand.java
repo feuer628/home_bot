@@ -5,6 +5,7 @@ import com.cheremnov.bot.BotUser;
 import com.cheremnov.bot.UserRepository;
 import com.cheremnov.bot.callback.ICallbackHandler;
 import com.cheremnov.bot.message.AbstractMessageHandler;
+import com.cheremnov.bot.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -56,17 +57,11 @@ public class AddUserCommand extends AbstractCommandHandler {
 
         @Override
         public void handle(CallbackQuery callback, Bot bot) {
-
-
             bot.deleteInlineMarkup(callback.getMessage());
             log.info(String.valueOf(userRepository.count()));
-            BotUser botUser = new BotUser();
-            botUser.setId(1L);
-            botUser.setName("asd");
+            BotUser botUser = JsonUtils.objectFromString(getCallbackInfo(callback), BotUser.class);
             userRepository.save(botUser);
             log.info(String.valueOf(userRepository.count()));
-
-            // TODO
             bot.restoreDefaultMessageHandler();
             bot.sendText(callback.getMessage().getChatId(), "Пользователь добавлен в список доверенных");
             bot.answerCallback(callback, null);
@@ -129,7 +124,7 @@ public class AddUserCommand extends AbstractCommandHandler {
         private InlineKeyboardMarkup getInlineBottoms(BotUser botUser) {
             InlineKeyboardMarkup markupKeyboard = new InlineKeyboardMarkup();
             markupKeyboard.setKeyboard(Collections.singletonList(
-                    Arrays.asList(getBean(AddUserCallBack.class).getInlineButton(""), getBean(CancelAddUserCallBack.class).getInlineButton())));
+                    Arrays.asList(getBean(AddUserCallBack.class).getInlineButton(JsonUtils.objectToString(botUser)), getBean(CancelAddUserCallBack.class).getInlineButton())));
             return markupKeyboard;
         }
     }
