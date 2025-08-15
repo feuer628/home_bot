@@ -4,11 +4,11 @@ import com.cheremnov.bot.callback.ICallbackHandler;
 import com.cheremnov.bot.command.ICommandHandler;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Service
+@Repository
 public class Handlers {
 
     @Getter

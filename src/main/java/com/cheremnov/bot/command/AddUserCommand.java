@@ -1,8 +1,12 @@
 package com.cheremnov.bot.command;
 
-import com.cheremnov.bot.message.AbstractMessageHandler;
 import com.cheremnov.bot.Bot;
+import com.cheremnov.bot.BotUser;
+import com.cheremnov.bot.UserRepository;
 import com.cheremnov.bot.callback.ICallbackHandler;
+import com.cheremnov.bot.message.AbstractMessageHandler;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -14,6 +18,7 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
 
+@Slf4j
 @Component
 public class AddUserCommand extends AbstractCommandHandler {
 
@@ -36,6 +41,9 @@ public class AddUserCommand extends AbstractCommandHandler {
     @Component
     public static class AddUserCallBack implements ICallbackHandler {
 
+        @Autowired
+        UserRepository userRepository;
+
         @Override
         public String callbackPrefix() {
             return "addUser";
@@ -48,7 +56,16 @@ public class AddUserCommand extends AbstractCommandHandler {
 
         @Override
         public void handle(CallbackQuery callback, Bot bot) {
+
+
             bot.deleteInlineMarkup(callback.getMessage());
+            log.info(String.valueOf(userRepository.count()));
+            BotUser botUser = new BotUser();
+            botUser.setId(1L);
+            botUser.setName("asd");
+            userRepository.save(botUser);
+            log.info(String.valueOf(userRepository.count()));
+
             // TODO
             bot.restoreDefaultMessageHandler();
             bot.sendText(callback.getMessage().getChatId(), "Пользователь добавлен в список доверенных");
@@ -102,13 +119,17 @@ public class AddUserCommand extends AbstractCommandHandler {
             String userName = forwardUser.getUserName() == null ?
                     "" : "UserName: @" + forwardUser.getUserName() + "\n";
 
-            bot.sendText(message.getChatId(), MessageFormat.format(pattern, fio, forwardUser.getId().toString(), userName), getInlineBottoms());
+            BotUser botUser = new BotUser();
+            botUser.setId(forwardUser.getId());
+            botUser.setName(userName);
+
+            bot.sendText(message.getChatId(), MessageFormat.format(pattern, fio, forwardUser.getId().toString(), userName), getInlineBottoms(botUser));
         }
 
-        private InlineKeyboardMarkup getInlineBottoms() {
+        private InlineKeyboardMarkup getInlineBottoms(BotUser botUser) {
             InlineKeyboardMarkup markupKeyboard = new InlineKeyboardMarkup();
             markupKeyboard.setKeyboard(Collections.singletonList(
-                    Arrays.asList(getBean(AddUserCallBack.class).getInlineButton(), getBean(CancelAddUserCallBack.class).getInlineButton())));
+                    Arrays.asList(getBean(AddUserCallBack.class).getInlineButton(""), getBean(CancelAddUserCallBack.class).getInlineButton())));
             return markupKeyboard;
         }
     }
