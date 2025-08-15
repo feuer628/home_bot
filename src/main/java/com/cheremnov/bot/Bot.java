@@ -1,8 +1,8 @@
 package com.cheremnov.bot;
 
-import com.cheremnov.bot.callback.ICallbackHandler;
+import com.cheremnov.bot.command.ICallbackHandler;
 import com.cheremnov.bot.command.ICommandHandler;
-import com.cheremnov.bot.message.IMessageHandler;
+import com.cheremnov.bot.command.IMessageHandler;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -82,12 +82,7 @@ public class Bot extends TelegramLongPollingBot {
                     log.error("Не найден обработчик для команды " + cmd);
                     return;
                 }
-                try {
-                    handler.handle(update.getMessage(), this);
-                } catch (TelegramApiException e) {
-                    log.error("Ошибка при обработке команды", e);
-                    throw new RuntimeException(e);
-                }
+                handler.handle(update.getMessage(), this);
             } else {
                 messageHandler.handle(update.getMessage(), this);
             }

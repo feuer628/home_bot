@@ -1,6 +1,6 @@
 package com.cheremnov.bot;
 
-import com.cheremnov.bot.callback.ICallbackHandler;
+import com.cheremnov.bot.command.ICallbackHandler;
 import com.cheremnov.bot.command.ICommandHandler;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.cheremnov.bot.message;
+package com.cheremnov.bot.command;
 
 import com.cheremnov.bot.Bot;
 import org.telegram.telegrambots.meta.api.objects.Message;

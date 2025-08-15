@@ -1,8 +1,7 @@
-package com.cheremnov.bot.command;
+package com.cheremnov.bot.command.water;
 
 import com.cheremnov.bot.Bot;
-import com.cheremnov.bot.callback.water.WaterOffCallback;
-import com.cheremnov.bot.callback.water.WaterOnCallback;
+import com.cheremnov.bot.command.AbstractCommandHandler;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;

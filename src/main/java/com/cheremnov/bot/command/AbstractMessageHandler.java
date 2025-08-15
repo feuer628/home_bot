@@ -1,4 +1,4 @@
-package com.cheremnov.bot.message;
+package com.cheremnov.bot.command;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -10,7 +10,7 @@ public abstract class AbstractMessageHandler implements IMessageHandler {
     @Autowired
     ApplicationContext context;
 
-    <T> T getBean(Class<T> requiredType) {
+    public <T> T getBean(Class<T> requiredType) {
         return context.getBean(requiredType);
     }
 }

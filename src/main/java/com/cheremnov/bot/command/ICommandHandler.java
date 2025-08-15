@@ -7,5 +7,5 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 public interface ICommandHandler {
     String getCommandName();
     String getCommandDescription();
-    void handle(Message message, Bot bot) throws TelegramApiException;
+    void handle(Message message, Bot bot);
 }

@@ -1,6 +1,6 @@
 package com.cheremnov.bot.utils;
 
-import com.cheremnov.bot.BotUser;
+import com.cheremnov.bot.db.user.BotUser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -8,7 +8,7 @@ public class JsonUtils {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    private JsonUtils(){};
+    private JsonUtils(){}
 
     public static String objectToString(Object object) {
         try {
@@ -22,7 +22,7 @@ public class JsonUtils {
 
     public static <T> T objectFromString(String content, Class<T> valueType) {
         try {
-            return (T) objectMapper.readValue(content, BotUser.class);
+            return (T) objectMapper.readValue(content, valueType);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

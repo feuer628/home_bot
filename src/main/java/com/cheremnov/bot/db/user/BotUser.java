@@ -1,4 +1,4 @@
-package com.cheremnov.bot;
+package com.cheremnov.bot.db.user;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

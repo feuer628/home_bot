@@ -1,9 +1,7 @@
-package com.cheremnov.bot.callback.water;
+package com.cheremnov.bot.command.water;
 
 import com.cheremnov.bot.Bot;
-import com.cheremnov.bot.callback.ICallbackHandler;
-import com.cheremnov.bot.command.AddUserCommand;
-import lombok.Getter;
+import com.cheremnov.bot.command.ICallbackHandler;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
