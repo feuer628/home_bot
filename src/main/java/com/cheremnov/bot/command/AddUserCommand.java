@@ -105,18 +105,25 @@ public class AddUserCommand extends AbstractCommandHandler {
                 bot.sendText(message.getChatId(), "Ботов нельзя добавлять в список доверенных");
                 return;
             }
-            String pattern = """
-                    Вы дествительно хотете добавить пользователя
-                    ФИО: {0}
-                    UserId: {1}
-                    {2} в список доверенных пользователей?""";
             String fio = forwardUser.getFirstName() + " " + forwardUser.getLastName();
             String userName = forwardUser.getUserName() == null ?
                     "" : "UserName: @" + forwardUser.getUserName() + "\n";
 
             BotUser botUser = new BotUser();
             botUser.setId(forwardUser.getId());
-            botUser.setName(userName);
+            botUser.setName(forwardUser.getUserName());
+
+            if (userRepository.existsById(botUser.getId())) {
+                bot.sendText(message.getChatId(), "Пользователь " + botUser.getName() + " уже добавлен в список доверенных");
+                return;
+            }
+
+            String pattern = """
+                    Вы дествительно хотете добавить пользователя
+                    ФИО: {0}
+                    UserId: {1}
+                    {2} в список доверенных пользователей?""";
+
 
             bot.sendText(message.getChatId(), MessageFormat.format(pattern, fio, forwardUser.getId().toString(), userName), getInlineBottoms(botUser));
         }
