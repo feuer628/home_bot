@@ -9,7 +9,7 @@ spring:
       ddl-auto: update
   h2:
     console:
-      enabled: true
+      enabled: false
       path: /h2-console
 
 logging:
