@@ -2,27 +2,32 @@ package com.cheremnov.bot.command.user;
 
 import com.cheremnov.bot.Bot;
 import com.cheremnov.bot.command.ICallbackHandler;
+import com.cheremnov.bot.db.user.TrustedUserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 @Component
-public class CancelAddUserCallBack implements ICallbackHandler {
+public class DeleteUserCallback implements ICallbackHandler {
+
+    @Autowired
+    private TrustedUserRepository trustedUserRepository;
 
     @Override
     public String callbackPrefix() {
-        return "cancelAddUser";
+        return "delete_user";
     }
 
+    @Override
     public String getInlineButtonText() {
-        return "Отмена";
+        return "Удалить";
     }
 
     @Override
     public void handle(CallbackQuery callback, Bot bot) {
+        trustedUserRepository.deleteById(Long.valueOf(getCallbackInfo(callback)));
         bot.deleteInlineMarkup(callback.getMessage());
-        bot.restoreDefaultMessageHandler();
-        bot.sendText(callback.getMessage().getChatId(), "Добавление пользователя отменено");
         bot.answerCallback(callback, null);
+        bot.sendText(callback.getMessage().getChatId(), "Пользователь удален");
     }
 }

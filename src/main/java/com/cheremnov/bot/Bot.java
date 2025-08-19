@@ -118,10 +118,14 @@ public class Bot extends TelegramLongPollingBot {
     }
 
     public void deleteInlineMarkup(MaybeInaccessibleMessage message) {
+        setInlineMarkup(message, null);
+    }
+
+    public void setInlineMarkup(MaybeInaccessibleMessage message, InlineKeyboardMarkup inlineKeyboardMarkup) {
         EditMessageReplyMarkup editMarkup = new EditMessageReplyMarkup();
         editMarkup.setChatId(message.getChatId());
         editMarkup.setMessageId(message.getMessageId());
-        editMarkup.setReplyMarkup(null); // удаляем клавиатуру
+        editMarkup.setReplyMarkup(inlineKeyboardMarkup);
         try {
             execute(editMarkup);
         } catch (TelegramApiException e) {
@@ -130,10 +134,15 @@ public class Bot extends TelegramLongPollingBot {
     }
 
     public void editMessageText(Long chatId, Integer messageId, String text) {
+        editMessageText(chatId, messageId, text, null);
+    }
+
+    public void editMessageText(Long chatId, Integer messageId, String text, InlineKeyboardMarkup inlineKeyboardMarkup) {
         EditMessageText edit = new EditMessageText();
         edit.setChatId(chatId.toString());
         edit.setMessageId(messageId);
         edit.setText(text);
+        edit.setReplyMarkup(inlineKeyboardMarkup);
         try {
             execute(edit);
         } catch (TelegramApiException e) {

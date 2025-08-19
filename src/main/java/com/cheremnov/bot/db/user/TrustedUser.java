@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Entity
 @Data
-public class BotUser {
+public class TrustedUser {
 
     @Id
     private Long id;

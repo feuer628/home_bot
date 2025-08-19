@@ -8,11 +8,25 @@ public interface ICallbackHandler {
 
     String callbackPrefix();
 
-    InlineKeyboardButton getInlineButton();
+    default String getInlineButtonText() {
+        return "Нет текста для кнопки";
+    }
 
-    default InlineKeyboardButton getInlineButton(String s) {
+    default InlineKeyboardButton getInlineButton() {
+        InlineKeyboardButton button = new InlineKeyboardButton(getInlineButtonText());
+        button.setCallbackData(callbackPrefix());
+        return button;
+    }
+
+    default InlineKeyboardButton getInlineButton(String callbackData) {
         InlineKeyboardButton button = getInlineButton();
-        button.setCallbackData(button.getCallbackData() + ":" + s);
+        button.setCallbackData(button.getCallbackData() + ":" + callbackData);
+        return button;
+    }
+
+    default InlineKeyboardButton getInlineButton(String buttonText, String callbackData) {
+        InlineKeyboardButton button =  new InlineKeyboardButton(buttonText);
+        button.setCallbackData(callbackPrefix() + ":" + callbackData);
         return button;
     }
 

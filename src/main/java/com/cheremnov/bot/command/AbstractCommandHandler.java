@@ -1,6 +1,5 @@
 package com.cheremnov.bot.command;
 
-import com.cheremnov.bot.db.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;

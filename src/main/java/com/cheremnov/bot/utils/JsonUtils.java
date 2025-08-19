@@ -1,6 +1,5 @@
 package com.cheremnov.bot.utils;
 
-import com.cheremnov.bot.db.user.BotUser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

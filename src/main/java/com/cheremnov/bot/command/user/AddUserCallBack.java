@@ -2,8 +2,8 @@ package com.cheremnov.bot.command.user;
 
 import com.cheremnov.bot.Bot;
 import com.cheremnov.bot.command.ICallbackHandler;
-import com.cheremnov.bot.db.user.BotUser;
-import com.cheremnov.bot.db.user.UserRepository;
+import com.cheremnov.bot.db.user.TrustedUser;
+import com.cheremnov.bot.db.user.TrustedUserRepository;
 import com.cheremnov.bot.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 public class AddUserCallBack implements ICallbackHandler {
 
     @Autowired
-    UserRepository userRepository;
+    TrustedUserRepository trustedUserRepository;
 
     @Override
     public String callbackPrefix() {
@@ -31,10 +31,10 @@ public class AddUserCallBack implements ICallbackHandler {
     @Override
     public void handle(CallbackQuery callback, Bot bot) {
         bot.deleteInlineMarkup(callback.getMessage());
-        log.info(String.valueOf(userRepository.count()));
-        BotUser botUser = JsonUtils.objectFromString(getCallbackInfo(callback), BotUser.class);
-        userRepository.save(botUser);
-        log.info(String.valueOf(userRepository.count()));
+        log.info(String.valueOf(trustedUserRepository.count()));
+        TrustedUser trustedUser = JsonUtils.objectFromString(getCallbackInfo(callback), TrustedUser.class);
+        trustedUserRepository.save(trustedUser);
+        log.info(String.valueOf(trustedUserRepository.count()));
         bot.restoreDefaultMessageHandler();
         bot.sendText(callback.getMessage().getChatId(), "Пользователь добавлен в список доверенных");
         bot.answerCallback(callback, null);

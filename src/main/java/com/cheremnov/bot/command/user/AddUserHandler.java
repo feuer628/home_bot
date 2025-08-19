@@ -2,12 +2,10 @@ package com.cheremnov.bot.command.user;
 
 import com.cheremnov.bot.Bot;
 import com.cheremnov.bot.command.AbstractMessageHandler;
-import com.cheremnov.bot.command.IMessageHandler;
-import com.cheremnov.bot.db.user.BotUser;
-import com.cheremnov.bot.db.user.UserRepository;
+import com.cheremnov.bot.db.user.TrustedUser;
+import com.cheremnov.bot.db.user.TrustedUserRepository;
 import com.cheremnov.bot.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.User;
@@ -21,7 +19,7 @@ import java.util.Collections;
 public class AddUserHandler extends AbstractMessageHandler {
 
     @Autowired
-    public UserRepository userRepository;
+    public TrustedUserRepository trustedUserRepository;
 
     @Override
     public void handle(Message message, Bot bot) {
@@ -39,12 +37,12 @@ public class AddUserHandler extends AbstractMessageHandler {
         String userName = forwardUser.getUserName() == null ?
                 "" : "UserName: @" + forwardUser.getUserName() + "\n";
 
-        BotUser botUser = new BotUser();
-        botUser.setId(forwardUser.getId());
-        botUser.setName(forwardUser.getUserName());
+        TrustedUser trustedUser = new TrustedUser();
+        trustedUser.setId(forwardUser.getId());
+        trustedUser.setName(forwardUser.getUserName());
 
-        if (userRepository.existsById(botUser.getId())) {
-            bot.sendText(message.getChatId(), "Пользователь " + botUser.getName() + " уже добавлен в список доверенных");
+        if (trustedUserRepository.existsById(trustedUser.getId())) {
+            bot.sendText(message.getChatId(), "Пользователь " + trustedUser.getName() + " уже добавлен в список доверенных");
             return;
         }
 
@@ -55,13 +53,13 @@ public class AddUserHandler extends AbstractMessageHandler {
                 {2} в список доверенных пользователей?""";
 
 
-        bot.sendText(message.getChatId(), MessageFormat.format(pattern, fio, forwardUser.getId().toString(), userName), getInlineBottoms(botUser));
+        bot.sendText(message.getChatId(), MessageFormat.format(pattern, fio, forwardUser.getId().toString(), userName), getInlineBottoms(trustedUser));
     }
 
-    private InlineKeyboardMarkup getInlineBottoms(BotUser botUser) {
+    private InlineKeyboardMarkup getInlineBottoms(TrustedUser trustedUser) {
         InlineKeyboardMarkup markupKeyboard = new InlineKeyboardMarkup();
         markupKeyboard.setKeyboard(Collections.singletonList(
-                Arrays.asList(getBean(AddUserCallBack.class).getInlineButton(JsonUtils.objectToString(botUser)), getBean(CancelAddUserCallBack.class).getInlineButton())));
+                Arrays.asList(getBean(AddUserCallBack.class).getInlineButton(JsonUtils.objectToString(trustedUser)), getBean(CancelAddUserCallBack.class).getInlineButton())));
         return markupKeyboard;
     }
 }
