@@ -39,16 +39,16 @@ public class AddUserHandler extends AbstractMessageHandler {
         String fio = String.join(" ", forwardUser.getFirstName(), forwardUser.getLastName());
         String userName = forwardUser.getUserName() == null ?
                 "" : "UserName: @" + forwardUser.getUserName() + "\n";
-
         Subscriber subscriber = new Subscriber();
         subscriber.setId(forwardUser.getId());
         subscriber.setName(fio);
-        subscriberRepository.save(subscriber);
         if (trustedUserRepository.existsById(subscriber.getId())) {
             bot.sendText(message.getChatId(), "Пользователь " + subscriber.getName() + " уже добавлен в список доверенных");
             return;
         }
-
+        if (!subscriberRepository.existsById(subscriber.getId())) {
+            subscriberRepository.save(subscriber);
+        }
         String pattern = """
                 Вы дествительно хотете добавить пользователя
                 ФИО: {0}
