@@ -13,5 +13,5 @@ public class Subscriber {
 
     private String name;
 
-    private long chatId;
+    private Long chatId;
 }

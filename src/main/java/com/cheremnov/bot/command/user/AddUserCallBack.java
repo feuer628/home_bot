@@ -2,6 +2,8 @@ package com.cheremnov.bot.command.user;
 
 import com.cheremnov.bot.Bot;
 import com.cheremnov.bot.command.ICallbackHandler;
+import com.cheremnov.bot.db.subscibers.Subscriber;
+import com.cheremnov.bot.db.subscibers.SubscriberRepository;
 import com.cheremnov.bot.db.trusted_user.TrustedUser;
 import com.cheremnov.bot.db.trusted_user.TrustedUserRepository;
 import com.cheremnov.bot.utils.JsonUtils;
@@ -18,6 +20,9 @@ public class AddUserCallBack implements ICallbackHandler {
     @Autowired
     TrustedUserRepository trustedUserRepository;
 
+    @Autowired
+    public SubscriberRepository subscriberRepository;
+
     @Override
     public String callbackPrefix() {
         return "addUser";
@@ -31,10 +36,13 @@ public class AddUserCallBack implements ICallbackHandler {
     @Override
     public void handle(CallbackQuery callback, Bot bot) {
         bot.deleteInlineMarkup(callback.getMessage());
-        log.info(String.valueOf(trustedUserRepository.count()));
-        TrustedUser trustedUser = JsonUtils.objectFromString(getCallbackInfo(callback), TrustedUser.class);
+        Subscriber subscriber = subscriberRepository.findById(Long.valueOf(getCallbackInfo(callback))).orElseThrow();
+
+        TrustedUser trustedUser = new TrustedUser();
+        trustedUser.setId(subscriber.getId());
+        trustedUser.setName(subscriber.getName());
+
         trustedUserRepository.save(trustedUser);
-        log.info(String.valueOf(trustedUserRepository.count()));
         bot.restoreDefaultMessageHandler();
         bot.sendText(callback.getMessage().getChatId(), "Пользователь добавлен в список доверенных");
         bot.answerCallback(callback, null);

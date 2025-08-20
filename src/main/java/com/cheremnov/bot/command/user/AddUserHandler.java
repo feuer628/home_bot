@@ -2,9 +2,9 @@ package com.cheremnov.bot.command.user;
 
 import com.cheremnov.bot.Bot;
 import com.cheremnov.bot.command.AbstractMessageHandler;
-import com.cheremnov.bot.db.trusted_user.TrustedUser;
+import com.cheremnov.bot.db.subscibers.Subscriber;
+import com.cheremnov.bot.db.subscibers.SubscriberRepository;
 import com.cheremnov.bot.db.trusted_user.TrustedUserRepository;
-import com.cheremnov.bot.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -20,6 +20,9 @@ public class AddUserHandler extends AbstractMessageHandler {
 
     @Autowired
     public TrustedUserRepository trustedUserRepository;
+
+    @Autowired
+    public SubscriberRepository subscriberRepository;
 
     @Override
     public void handle(Message message, Bot bot) {
@@ -37,12 +40,12 @@ public class AddUserHandler extends AbstractMessageHandler {
         String userName = forwardUser.getUserName() == null ?
                 "" : "UserName: @" + forwardUser.getUserName() + "\n";
 
-        TrustedUser trustedUser = new TrustedUser();
-        trustedUser.setId(forwardUser.getId());
-        trustedUser.setName(fio);
-
-        if (trustedUserRepository.existsById(trustedUser.getId())) {
-            bot.sendText(message.getChatId(), "Пользователь " + trustedUser.getName() + " уже добавлен в список доверенных");
+        Subscriber subscriber = new Subscriber();
+        subscriber.setId(forwardUser.getId());
+        subscriber.setName(fio);
+        subscriberRepository.save(subscriber);
+        if (trustedUserRepository.existsById(subscriber.getId())) {
+            bot.sendText(message.getChatId(), "Пользователь " + subscriber.getName() + " уже добавлен в список доверенных");
             return;
         }
 
@@ -53,13 +56,13 @@ public class AddUserHandler extends AbstractMessageHandler {
                 {2} в список доверенных пользователей?""";
 
 
-        bot.sendText(message.getChatId(), MessageFormat.format(pattern, fio, forwardUser.getId().toString(), userName), getInlineBottoms(trustedUser));
+        bot.sendText(message.getChatId(), MessageFormat.format(pattern, fio, forwardUser.getId().toString(), userName), getInlineBottoms(subscriber.getId()));
     }
 
-    private InlineKeyboardMarkup getInlineBottoms(TrustedUser trustedUser) {
+    private InlineKeyboardMarkup getInlineBottoms(long userId) {
         InlineKeyboardMarkup markupKeyboard = new InlineKeyboardMarkup();
         markupKeyboard.setKeyboard(Collections.singletonList(
-                Arrays.asList(getBean(AddUserCallBack.class).getInlineButton(JsonUtils.objectToString(trustedUser)), getBean(CancelAddUserCallBack.class).getInlineButton())));
+                Arrays.asList(getBean(AddUserCallBack.class).getInlineButton(String.valueOf(userId)), getBean(CancelAddUserCallBack.class).getInlineButton(String.valueOf(userId)))));
         return markupKeyboard;
     }
 }

@@ -21,6 +21,9 @@ public class BotController {
     @GetMapping("/send-message")
     public void sendMessage() {
         subscriberRepository.findAll().forEach(subscriber ->  {
+            if (subscriber.getChatId() == null) {
+                return;
+            }
             try {
                 bot.sendText(subscriber.getChatId(), "Ты есть - " + subscriber.getName());
             } catch (BotBlockedException e) {
