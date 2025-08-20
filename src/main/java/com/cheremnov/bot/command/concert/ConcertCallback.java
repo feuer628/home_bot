@@ -49,9 +49,11 @@ public class ConcertCallback implements ICallbackHandler {
 
     private String getMessageText(int currentConcertNumber, boolean hasNext) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("\uD83C\uDFA4 Выступает \n ").append(concertNumberRepository.findById((long) (currentConcertNumber)).orElseThrow().getName());
+        stringBuilder.append("\uD83C\uDFA4 Выступает \n ").append(currentConcertNumber+1).append(". ")
+                .append(concertNumberRepository.findById((long) (currentConcertNumber)).orElseThrow().getName());
         if (hasNext) {
-            stringBuilder.append("\n").append("\n‼️ Следующий номер \n").append(concertNumberRepository.findById((long) (currentConcertNumber + 1)).orElseThrow().getName());
+            stringBuilder.append("\n").append("\n‼️ Следующий номер \n").append(currentConcertNumber+2).append(". ")
+                    .append(concertNumberRepository.findById((long) (currentConcertNumber + 1)).orElseThrow().getName());
         }
         return stringBuilder.toString();
     }
