@@ -1,0 +1,27 @@
+package com.cheremnov.bot.command.concert;
+
+import com.cheremnov.bot.Bot;
+import com.cheremnov.bot.command.AbstractCommandHandler;
+import com.cheremnov.bot.command.ICommandHandler;
+import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.objects.Message;
+
+@Component
+public class AddConcertCommand extends AbstractCommandHandler {
+
+    @Override
+    public String getCommandName() {
+        return "add_concert";
+    }
+
+    @Override
+    public String getCommandDescription() {
+        return "Добавление нового концерта";
+    }
+
+    @Override
+    public void handle(Message message, Bot bot) {
+        bot.sendText(message.getChatId(), "Для добавления нового концерта пришлите список номеров, где каждый номер на отдельной строке. Старый концерт будет удален");
+        bot.setMessageHandler(getBean(AddConcertMessageHandler.class));
+    }
+}

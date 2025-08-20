@@ -2,7 +2,10 @@ package com.cheremnov.bot.command;
 
 import com.cheremnov.bot.Bot;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+
+import java.util.Collections;
 
 public interface ICallbackHandler {
 
@@ -10,6 +13,12 @@ public interface ICallbackHandler {
 
     default String getInlineButtonText() {
         return "Нет текста для кнопки";
+    }
+
+    default InlineKeyboardMarkup getSingleButton(String buttonText, String callbackData) {
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        inlineKeyboardMarkup.setKeyboard(Collections.singletonList(Collections.singletonList(getInlineButton(buttonText, callbackData))));
+        return inlineKeyboardMarkup;
     }
 
     default InlineKeyboardButton getInlineButton() {
