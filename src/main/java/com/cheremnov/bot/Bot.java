@@ -3,8 +3,15 @@ package com.cheremnov.bot;
 import com.cheremnov.bot.command.ICallbackHandler;
 import com.cheremnov.bot.command.ICommandHandler;
 import com.cheremnov.bot.command.IMessageHandler;
+import com.cheremnov.bot.db.trusted_user.TrustedUserRepository;
+import com.cheremnov.bot.exception.BotBlockedException;
+import jakarta.annotation.PostConstruct;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
@@ -24,42 +31,57 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
+@Service
 public class Bot extends TelegramLongPollingBot {
 
 
     private static final IMessageHandler defaultMessageHandler = (message, bot) -> bot.sendText(message.getChatId(), "Не понятно...");
     private final Map<String, ICallbackHandler> prefixCallbacks = new ConcurrentHashMap<>();
     private final Map<String, ICommandHandler> commandHandlers = new ConcurrentHashMap<>();
+
+    @Autowired
+    private TrustedUserRepository trustedUserRepository;
+
+    @Autowired
+    private Handlers handlers;
+
     @Setter
     private IMessageHandler messageHandler = defaultMessageHandler;
 
-    public Bot(String botToken) {
+
+    @Autowired
+    public Bot(@Value("${token}") String botToken) {
         super(botToken);
     }
 
-    public void initHandlers(Handlers handlers) {
+    @PostConstruct
+    public void initHandlers() {
         for (ICallbackHandler callbackHandler : handlers.getCallbackHandlers()) {
             prefixCallbacks.put(callbackHandler.callbackPrefix(), callbackHandler);
         }
         for (ICommandHandler commandHandler : handlers.getCommandHandlers()) {
             commandHandlers.put(commandHandler.getCommandName(), commandHandler);
         }
-        // установка меню
+    }
+
+    public void setMenuCommands(@NonNull Long userId) {
+        boolean isTrustedUser = trustedUserRepository.existsById(userId);
+        List<BotCommand> menuCommandList = new ArrayList<>();
+        for (ICommandHandler commandHandler : commandHandlers.values()) {
+            if (!commandHandler.isCommandHidden() && (commandHandler.isPublicCommand() || isTrustedUser)) {
+                menuCommandList.add(new BotCommand(commandHandler.getCommandName(), commandHandler.getCommandDescription()));
+            }
+        }
+        if (menuCommandList.isEmpty()) {
+            return;
+        }
         SetMyCommands menu = new SetMyCommands();
-        menu.setCommands(getMenuCommands(handlers.getCommandHandlers()));
+        menu.setCommands(menuCommandList);
         try {
             execute(menu);
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public static List<BotCommand> getMenuCommands(List<ICommandHandler> commandHandlers) {
-        List<BotCommand> menuCommandList = new ArrayList<>();
-        for (ICommandHandler commandHandler : commandHandlers) {
-            menuCommandList.add(new BotCommand(commandHandler.getCommandName(), commandHandler.getCommandDescription()));
-        }
-        return menuCommandList;
     }
 
     public String getBotUsername() {
@@ -73,6 +95,7 @@ public class Bot extends TelegramLongPollingBot {
             return;
         }
         if (update.hasMessage() && update.getMessage().hasText()) {
+            setMenuCommands(update.getMessage().getFrom().getId());
             String text = update.getMessage().getText().trim();
             if (text.startsWith("/")) {
                 String cmd = text.split(" ")[0].substring(1); // "start" from "/start args"
@@ -162,6 +185,9 @@ public class Bot extends TelegramLongPollingBot {
         try {
             execute(m);
         } catch (TelegramApiException e) {
+            if (e.getMessage().contains("bot was blocked by the user")) {
+                throw new BotBlockedException(e);
+            }
             throw new RuntimeException(e);
         }
     }

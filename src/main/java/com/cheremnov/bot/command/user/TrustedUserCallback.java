@@ -2,15 +2,14 @@ package com.cheremnov.bot.command.user;
 
 import com.cheremnov.bot.Bot;
 import com.cheremnov.bot.command.ICallbackHandler;
-import com.cheremnov.bot.db.user.TrustedUser;
-import com.cheremnov.bot.db.user.TrustedUserRepository;
+import com.cheremnov.bot.db.trusted_user.TrustedUser;
+import com.cheremnov.bot.db.trusted_user.TrustedUserRepository;
 import com.cheremnov.bot.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,7 +32,8 @@ public class TrustedUserCallback implements ICallbackHandler {
     public void handle(CallbackQuery callback, Bot bot) {
         TrustedUserInfoModel trustedUserInfoModel = JsonUtils.objectFromString(getCallbackInfo(callback), TrustedUserInfoModel.class);
         TrustedUser trustedUser = trustedUserRepository.findById(trustedUserInfoModel.getUserId()).orElseThrow();
-        bot.editMessageText(callback.getMessage().getChatId(), callback.getMessage().getMessageId(), trustedUser.getName(), getInlineKeyboard(trustedUserInfoModel));
+        String text = "Доверенный пользователь:\n\n✅ " + trustedUser.getName();
+        bot.editMessageText(callback.getMessage().getChatId(), callback.getMessage().getMessageId(), text, getInlineKeyboard(trustedUserInfoModel));
     }
 
     private InlineKeyboardMarkup getInlineKeyboard(TrustedUserInfoModel trustedUserInfoModel) {

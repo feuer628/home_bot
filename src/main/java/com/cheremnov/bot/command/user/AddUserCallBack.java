@@ -2,8 +2,8 @@ package com.cheremnov.bot.command.user;
 
 import com.cheremnov.bot.Bot;
 import com.cheremnov.bot.command.ICallbackHandler;
-import com.cheremnov.bot.db.user.TrustedUser;
-import com.cheremnov.bot.db.user.TrustedUserRepository;
+import com.cheremnov.bot.db.trusted_user.TrustedUser;
+import com.cheremnov.bot.db.trusted_user.TrustedUserRepository;
 import com.cheremnov.bot.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

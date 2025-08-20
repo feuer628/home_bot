@@ -1,4 +1,4 @@
-package com.cheremnov.bot.db.user;
+package com.cheremnov.bot.db.trusted_user;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

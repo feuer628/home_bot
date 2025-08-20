@@ -2,8 +2,8 @@ package com.cheremnov.bot.command.user;
 
 import com.cheremnov.bot.Bot;
 import com.cheremnov.bot.command.AbstractMessageHandler;
-import com.cheremnov.bot.db.user.TrustedUser;
-import com.cheremnov.bot.db.user.TrustedUserRepository;
+import com.cheremnov.bot.db.trusted_user.TrustedUser;
+import com.cheremnov.bot.db.trusted_user.TrustedUserRepository;
 import com.cheremnov.bot.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,13 +33,13 @@ public class AddUserHandler extends AbstractMessageHandler {
             bot.sendText(message.getChatId(), "Ботов нельзя добавлять в список доверенных");
             return;
         }
-        String fio = forwardUser.getFirstName() + " " + forwardUser.getLastName();
+        String fio = String.join(" ", forwardUser.getFirstName(), forwardUser.getLastName());
         String userName = forwardUser.getUserName() == null ?
                 "" : "UserName: @" + forwardUser.getUserName() + "\n";
 
         TrustedUser trustedUser = new TrustedUser();
         trustedUser.setId(forwardUser.getId());
-        trustedUser.setName(forwardUser.getUserName());
+        trustedUser.setName(fio);
 
         if (trustedUserRepository.existsById(trustedUser.getId())) {
             bot.sendText(message.getChatId(), "Пользователь " + trustedUser.getName() + " уже добавлен в список доверенных");

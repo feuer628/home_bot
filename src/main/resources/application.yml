@@ -12,6 +12,8 @@ spring:
       enabled: false
       path: /h2-console
 
+token:
+
 logging:
   level:
     org.hibernate.SQL: DEBUG

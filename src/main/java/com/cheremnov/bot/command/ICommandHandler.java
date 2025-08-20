@@ -2,10 +2,23 @@ package com.cheremnov.bot.command;
 
 import com.cheremnov.bot.Bot;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 public interface ICommandHandler {
+
+    default boolean isCommandHidden() {
+        return false;
+    }
+
+    default boolean isPublicCommand() {
+        return false;
+    }
+
     String getCommandName();
-    String getCommandDescription();
+
+    default String getCommandDescription() {
+        return null;
+    }
+
     void handle(Message message, Bot bot);
+
 }

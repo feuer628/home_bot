@@ -2,7 +2,7 @@ package com.cheremnov.bot.command.user;
 
 import com.cheremnov.bot.Bot;
 import com.cheremnov.bot.command.ICallbackHandler;
-import com.cheremnov.bot.db.user.TrustedUserRepository;
+import com.cheremnov.bot.db.trusted_user.TrustedUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
