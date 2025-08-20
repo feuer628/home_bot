@@ -60,10 +60,10 @@ public class UserListCommand extends AbstractCommandHandler {
         List<InlineKeyboardButton> navButton = new ArrayList<>();
         UserListCallback callback = context.getBean(UserListCallback.class);
         if (pageNumber > 0) {
-            navButton.add(callback.getInlineButton("◀\uFE0F Назад", String.valueOf(pageNumber - 1)));
+            navButton.add(callback.getInlineButton("◀️ Назад", String.valueOf(pageNumber - 1)));
         }
         if (pageNumber < trustedUsers.getTotalPages() - 1) {
-            navButton.add(callback.getInlineButton("Далее ▶\uFE0F", String.valueOf(pageNumber + 1)));
+            navButton.add(callback.getInlineButton("Далее ▶️", String.valueOf(pageNumber + 1)));
         }
         if (!navButton.isEmpty()) {
             userButton.add(navButton);

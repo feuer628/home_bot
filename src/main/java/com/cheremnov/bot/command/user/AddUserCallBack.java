@@ -6,7 +6,6 @@ import com.cheremnov.bot.db.subscibers.Subscriber;
 import com.cheremnov.bot.db.subscibers.SubscriberRepository;
 import com.cheremnov.bot.db.trusted_user.TrustedUser;
 import com.cheremnov.bot.db.trusted_user.TrustedUserRepository;
-import com.cheremnov.bot.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,10 +17,9 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 public class AddUserCallBack implements ICallbackHandler {
 
     @Autowired
-    TrustedUserRepository trustedUserRepository;
-
-    @Autowired
     public SubscriberRepository subscriberRepository;
+    @Autowired
+    TrustedUserRepository trustedUserRepository;
 
     @Override
     public String callbackPrefix() {

@@ -6,7 +6,6 @@ import com.cheremnov.bot.db.subscibers.SubscriberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 @Component
 public class CancelAddUserCallBack implements ICallbackHandler {
