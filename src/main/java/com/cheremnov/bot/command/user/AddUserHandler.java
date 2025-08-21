@@ -25,7 +25,7 @@ public class AddUserHandler extends AbstractMessageHandler {
     public SubscriberRepository subscriberRepository;
 
     @Override
-    public void handle(Message message, Bot bot) {
+    public void handleMessage(Message message, Bot bot) {
         // тут должно быть пересланное сообщение
         User forwardUser = message.getForwardFrom();
         if (forwardUser == null) {

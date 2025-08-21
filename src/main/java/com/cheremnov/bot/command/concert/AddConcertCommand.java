@@ -21,6 +21,6 @@ public class AddConcertCommand extends AbstractCommandHandler {
     @Override
     public void handleCommand(Message message, Bot bot) {
         bot.sendText(message.getChatId(), "Для добавления нового концерта пришлите список номеров, где каждый номер на отдельной строке. Старый концерт будет удален");
-        bot.setMessageHandler(getBean(AddConcertMessageHandler.class));
+        bot.setMessageHandler(message.getChatId(), getBean(AddConcertMessageHandler.class));
     }
 }

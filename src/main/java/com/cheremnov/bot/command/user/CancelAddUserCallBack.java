@@ -26,7 +26,6 @@ public class CancelAddUserCallBack implements ICallbackHandler {
     public void handle(CallbackQuery callback, Bot bot) {
         subscriberRepository.deleteById(Long.valueOf(getCallbackInfo(callback)));
         bot.deleteInlineMarkup(callback.getMessage());
-        bot.restoreDefaultMessageHandler();
         bot.sendText(callback.getMessage().getChatId(), "Добавление пользователя отменено");
         bot.answerCallback(callback, null);
     }

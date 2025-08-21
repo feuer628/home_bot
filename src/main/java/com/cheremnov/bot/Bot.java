@@ -1,11 +1,10 @@
 package com.cheremnov.bot;
 
 import com.cheremnov.bot.command.AbstractCommandHandler;
+import com.cheremnov.bot.command.AbstractMessageHandler;
 import com.cheremnov.bot.command.ICallbackHandler;
-import com.cheremnov.bot.command.IMessageHandler;
 import com.cheremnov.bot.exception.BotBlockedException;
 import jakarta.annotation.PostConstruct;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +17,7 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageRe
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.MaybeInaccessibleMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -33,15 +33,19 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Bot extends TelegramLongPollingBot {
 
 
-    private static final IMessageHandler defaultMessageHandler = (message, bot) -> bot.sendText(message.getChatId(), "Не понятно...");
+    private static final AbstractMessageHandler defaultMessageHandler = new AbstractMessageHandler() {
+        @Override
+        public void handleMessage(Message message, Bot bot) {
+            bot.sendText(message.getChatId(), "Ничего не понимаю...");
+        }
+    };
     private final Map<String, ICallbackHandler> prefixCallbacks = new ConcurrentHashMap<>();
     private final Map<String, AbstractCommandHandler> commandHandlers = new ConcurrentHashMap<>();
 
     @Autowired
     private Handlers handlers;
 
-    @Setter
-    private IMessageHandler messageHandler = defaultMessageHandler;
+    private final Map<Long, AbstractMessageHandler> messageHandlers = new ConcurrentHashMap<>();
 
 
     @Autowired
@@ -101,6 +105,7 @@ public class Bot extends TelegramLongPollingBot {
                 }
                 handler.handle(update.getMessage(), this);
             } else {
+                AbstractMessageHandler messageHandler = messageHandlers.getOrDefault(update.getMessage().getChatId(), defaultMessageHandler);
                 messageHandler.handle(update.getMessage(), this);
             }
         }
@@ -186,8 +191,12 @@ public class Bot extends TelegramLongPollingBot {
         }
     }
 
-    public void restoreDefaultMessageHandler() {
-        this.messageHandler = defaultMessageHandler;
+    public void setMessageHandler(long chatId, AbstractMessageHandler messageHandler) {
+        messageHandlers.put(chatId, messageHandler);
+    }
+
+    public void deleteMessageHandler(long chatId) {
+        messageHandlers.remove(chatId);
     }
 
 }

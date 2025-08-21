@@ -52,7 +52,6 @@ public class AddUserCallBack implements ICallbackHandler {
         userChecker.reset();
 
 
-        bot.restoreDefaultMessageHandler();
         bot.sendText(callback.getMessage().getChatId(), "Пользователь добавлен в список доверенных");
         bot.answerCallback(callback, null);
     }
