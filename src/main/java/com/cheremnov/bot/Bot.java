@@ -1,12 +1,10 @@
 package com.cheremnov.bot;
 
+import com.cheremnov.bot.command.AbstractCommandHandler;
 import com.cheremnov.bot.command.ICallbackHandler;
-import com.cheremnov.bot.command.ICommandHandler;
 import com.cheremnov.bot.command.IMessageHandler;
-import com.cheremnov.bot.db.trusted_user.TrustedUserRepository;
 import com.cheremnov.bot.exception.BotBlockedException;
 import jakarta.annotation.PostConstruct;
-import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +35,7 @@ public class Bot extends TelegramLongPollingBot {
 
     private static final IMessageHandler defaultMessageHandler = (message, bot) -> bot.sendText(message.getChatId(), "Не понятно...");
     private final Map<String, ICallbackHandler> prefixCallbacks = new ConcurrentHashMap<>();
-    private final Map<String, ICommandHandler> commandHandlers = new ConcurrentHashMap<>();
-
-    @Autowired
-    private TrustedUserRepository trustedUserRepository;
+    private final Map<String, AbstractCommandHandler> commandHandlers = new ConcurrentHashMap<>();
 
     @Autowired
     private Handlers handlers;
@@ -55,20 +50,20 @@ public class Bot extends TelegramLongPollingBot {
     }
 
     @PostConstruct
-    public void initHandlers() {
+    public void initBot() {
         for (ICallbackHandler callbackHandler : handlers.getCallbackHandlers()) {
             prefixCallbacks.put(callbackHandler.callbackPrefix(), callbackHandler);
         }
-        for (ICommandHandler commandHandler : handlers.getCommandHandlers()) {
+        for (AbstractCommandHandler commandHandler : handlers.getCommandHandlers()) {
             commandHandlers.put(commandHandler.getCommandName(), commandHandler);
         }
+        setMenuCommands();
     }
 
-    public void setMenuCommands(@NonNull Long userId) {
-        boolean isTrustedUser = trustedUserRepository.existsById(userId);
+    private void setMenuCommands() {
         List<BotCommand> menuCommandList = new ArrayList<>();
-        for (ICommandHandler commandHandler : commandHandlers.values()) {
-            if (!commandHandler.isCommandHidden() && (commandHandler.isPublicCommand() || isTrustedUser)) {
+        for (AbstractCommandHandler commandHandler : commandHandlers.values()) {
+            if (!commandHandler.isCommandHidden()) {
                 menuCommandList.add(new BotCommand(commandHandler.getCommandName(), commandHandler.getCommandDescription()));
             }
         }
@@ -95,11 +90,10 @@ public class Bot extends TelegramLongPollingBot {
             return;
         }
         if (update.hasMessage() && update.getMessage().hasText()) {
-            setMenuCommands(update.getMessage().getFrom().getId());
             String text = update.getMessage().getText().trim();
             if (text.startsWith("/")) {
                 String cmd = text.split(" ")[0].substring(1); // "start" from "/start args"
-                ICommandHandler handler = commandHandlers.get(cmd);
+                AbstractCommandHandler handler = commandHandlers.get(cmd);
                 if (handler == null) {
                     sendText(update.getMessage().getChatId(), "Не найден обработчик для команды " + cmd);
                     log.error("Не найден обработчик для команды " + cmd);

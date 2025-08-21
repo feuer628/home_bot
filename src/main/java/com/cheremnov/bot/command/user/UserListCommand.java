@@ -33,11 +33,11 @@ public class UserListCommand extends AbstractCommandHandler {
 
     @Override
     public String getCommandDescription() {
-        return "✅ Список доверенных пользователей:";
+        return "Список доверенных пользователей:";
     }
 
     @Override
-    public void handle(Message message, Bot bot) {
+    public void handleCommand(Message message, Bot bot) {
         bot.sendText(message.getChatId(), getCommandDescription(), getInlineKeyboard(0));
     }
 

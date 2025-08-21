@@ -1,7 +1,7 @@
 package com.cheremnov.bot;
 
+import com.cheremnov.bot.command.AbstractCommandHandler;
 import com.cheremnov.bot.command.ICallbackHandler;
-import com.cheremnov.bot.command.ICommandHandler;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,14 +12,14 @@ import java.util.List;
 public class Handlers {
 
     @Getter
-    private final List<ICommandHandler> commandHandlers;
+    private final List<AbstractCommandHandler> commandHandlers;
 
     @Getter
     private final List<ICallbackHandler> callbackHandlers;
 
     // Использование конструктора для внедрения зависимостей
     @Autowired
-    public Handlers(List<ICommandHandler> commandHandlers, List<ICallbackHandler> callbackHandlers) {
+    public Handlers(List<AbstractCommandHandler> commandHandlers, List<ICallbackHandler> callbackHandlers) {
         this.commandHandlers = commandHandlers;
         this.callbackHandlers = callbackHandlers;
     }

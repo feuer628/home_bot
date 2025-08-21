@@ -21,7 +21,7 @@ public class AddUserCommand extends AbstractCommandHandler {
     }
 
     @Override
-    public void handle(Message message, Bot bot) {
+    public void handleCommand(Message message, Bot bot) {
         bot.sendText(message.getChatId(), "Для добавления пользователя в список доверенных перешлите любое его сообщение в этот чат");
         bot.setMessageHandler(getBean(AddUserHandler.class));
     }

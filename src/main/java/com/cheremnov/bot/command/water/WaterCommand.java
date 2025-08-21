@@ -31,7 +31,7 @@ public class WaterCommand extends AbstractCommandHandler {
     }
 
     @Override
-    public void handle(Message message1, Bot bot) {
+    public void handleCommand(Message message1, Bot bot) {
         bot.sendText(message1.getChatId(), "Что нужно сделать с водой?", getInlineBottomOnOff());
     }
 }

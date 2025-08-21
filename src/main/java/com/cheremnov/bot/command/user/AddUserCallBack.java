@@ -2,6 +2,7 @@ package com.cheremnov.bot.command.user;
 
 import com.cheremnov.bot.Bot;
 import com.cheremnov.bot.command.ICallbackHandler;
+import com.cheremnov.bot.command.security.UserChecker;
 import com.cheremnov.bot.db.subscibers.Subscriber;
 import com.cheremnov.bot.db.subscibers.SubscriberRepository;
 import com.cheremnov.bot.db.trusted_user.TrustedUser;
@@ -17,9 +18,13 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 public class AddUserCallBack implements ICallbackHandler {
 
     @Autowired
-    public SubscriberRepository subscriberRepository;
+    private SubscriberRepository subscriberRepository;
+
     @Autowired
-    TrustedUserRepository trustedUserRepository;
+    private TrustedUserRepository trustedUserRepository;
+
+    @Autowired
+    private UserChecker userChecker;
 
     @Override
     public String callbackPrefix() {
@@ -41,6 +46,12 @@ public class AddUserCallBack implements ICallbackHandler {
         trustedUser.setName(subscriber.getName());
 
         trustedUserRepository.save(trustedUser);
+        // после сохранения нового доверенного пользователя
+        // перезагружаем список доверенных пользователей
+        // чтобы новый сразу оказался в кешированном списке
+        userChecker.reset();
+
+
         bot.restoreDefaultMessageHandler();
         bot.sendText(callback.getMessage().getChatId(), "Пользователь добавлен в список доверенных");
         bot.answerCallback(callback, null);

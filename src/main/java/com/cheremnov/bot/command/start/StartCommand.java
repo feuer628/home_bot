@@ -1,7 +1,7 @@
 package com.cheremnov.bot.command.start;
 
 import com.cheremnov.bot.Bot;
-import com.cheremnov.bot.command.ICommandHandler;
+import com.cheremnov.bot.command.AbstractCommandHandler;
 import com.cheremnov.bot.db.subscibers.Subscriber;
 import com.cheremnov.bot.db.subscibers.SubscriberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +12,18 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import java.text.MessageFormat;
 
 @Component
-public class StartCommand implements ICommandHandler {
+public class StartCommand extends AbstractCommandHandler {
 
     @Autowired
-    SubscriberRepository subscriberRepository;
+    private SubscriberRepository subscriberRepository;
 
     @Override
     public boolean isCommandHidden() {
+        return true;
+    }
+
+    @Override
+    public boolean isPublicCommand() {
         return true;
     }
 
@@ -28,7 +33,7 @@ public class StartCommand implements ICommandHandler {
     }
 
     @Override
-    public void handle(Message message, Bot bot) {
+    public void handleCommand(Message message, Bot bot) {
         Subscriber subscriber = new Subscriber();
         User from = message.getFrom();
         subscriber.setId(from.getId());
