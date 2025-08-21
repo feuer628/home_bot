@@ -22,6 +22,6 @@ public class UserListCallback implements ICallbackHandler {
     public void handle(CallbackQuery callback, Bot bot) {
         UserListCommand userListCommand = context.getBean(UserListCommand.class);
         bot.editMessageText(callback.getMessage().getChatId(), callback.getMessage().getMessageId(), userListCommand.getCommandDescription(), userListCommand.getInlineKeyboard(Integer.parseInt(getCallbackInfo(callback))));
-        bot.answerCallback(callback, null);
+        bot.answerCallback(callback);
     }
 }

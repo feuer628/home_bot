@@ -126,6 +126,10 @@ public class Bot extends TelegramLongPollingBot {
         answerCallback(cq, "Неизвестное действие");
     }
 
+    public void answerCallback(CallbackQuery cq) {
+        answerCallback(cq, null);
+    }
+
     // Утилиты для отправки ответов
     public void answerCallback(CallbackQuery cq, String text) {
         AnswerCallbackQuery ans = new AnswerCallbackQuery();

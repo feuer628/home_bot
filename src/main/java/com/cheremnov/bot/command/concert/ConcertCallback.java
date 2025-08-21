@@ -36,7 +36,7 @@ public class ConcertCallback implements ICallbackHandler {
                         hasNext && userChecker.isUserTrusted(subscriber.getId()) ? getSingleButton("Следующий номер", String.valueOf(currentConcertNumber + 1)) : null);
             }
         });
-        bot.answerCallback(callback, null);
+        bot.answerCallback(callback);
         bot.deleteInlineMarkup(callback.getMessage());
     }
 

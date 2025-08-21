@@ -21,6 +21,6 @@ public class WaterOffCallback  implements ICallbackHandler {
     @Override
     public void handle(CallbackQuery callback, Bot bot) {
         bot.sendText(callback.getMessage().getChatId(), " Отправлен запрос на вЫключение воды \uD83D\uDEB0");
-        bot.answerCallback(callback, null);
+        bot.answerCallback(callback);
     }
 }

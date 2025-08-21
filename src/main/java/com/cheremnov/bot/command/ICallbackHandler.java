@@ -5,6 +5,7 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 public interface ICallbackHandler {
@@ -18,6 +19,15 @@ public interface ICallbackHandler {
     default InlineKeyboardMarkup getSingleButton(String buttonText, String callbackData) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         inlineKeyboardMarkup.setKeyboard(Collections.singletonList(Collections.singletonList(getInlineButton(buttonText, callbackData))));
+        return inlineKeyboardMarkup;
+    }
+
+    default InlineKeyboardMarkup getSingleButtonWithCancel(String buttonText, String callbackData) {
+        InlineKeyboardButton cancel =  new InlineKeyboardButton("Отмена");
+        cancel.setCallbackData("cancel");
+
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        inlineKeyboardMarkup.setKeyboard(Collections.singletonList(Arrays.asList(getInlineButton(buttonText, callbackData), cancel)));
         return inlineKeyboardMarkup;
     }
 

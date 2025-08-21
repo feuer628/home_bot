@@ -33,7 +33,7 @@ public class UserListCommand extends AbstractCommandHandler {
 
     @Override
     public String getCommandDescription() {
-        return "Список доверенных пользователей:";
+        return "Список доверенных пользователей";
     }
 
     @Override

@@ -23,6 +23,6 @@ public class WaterOnCallback  implements ICallbackHandler {
     @Override
     public void handle(CallbackQuery callback, Bot bot) {
         bot.editMessageText(callback.getMessage().getChatId(), callback.getMessage().getMessageId(), "Отправлен запрос на включение воды \uD83D\uDEB0");
-        bot.answerCallback(callback, null);
+        bot.answerCallback(callback);
     }
 }

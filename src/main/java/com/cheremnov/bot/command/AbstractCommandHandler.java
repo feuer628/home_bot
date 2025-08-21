@@ -26,9 +26,7 @@ public abstract class AbstractCommandHandler {
 
     public abstract String getCommandName();
 
-    public String getCommandDescription() {
-        return null;
-    }
+    public abstract String getCommandDescription();
 
     public <T> T getBean(Class<T> requiredType) {
         return context.getBean(requiredType);

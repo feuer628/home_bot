@@ -7,7 +7,8 @@ public class JsonUtils {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    private JsonUtils(){}
+    private JsonUtils() {
+    }
 
     public static String objectToString(Object object) {
         try {
@@ -16,8 +17,6 @@ public class JsonUtils {
             throw new RuntimeException(e);
         }
     }
-
-
 
     public static <T> T objectFromString(String content, Class<T> valueType) {
         try {

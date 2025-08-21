@@ -33,6 +33,11 @@ public class StartCommand extends AbstractCommandHandler {
     }
 
     @Override
+    public String getCommandDescription() {
+        return null;
+    }
+
+    @Override
     public void handleCommand(Message message, Bot bot) {
         Subscriber subscriber = new Subscriber();
         User from = message.getFrom();

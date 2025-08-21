@@ -27,7 +27,7 @@ public class DeleteUserCallback implements ICallbackHandler {
     public void handle(CallbackQuery callback, Bot bot) {
         trustedUserRepository.deleteById(Long.valueOf(getCallbackInfo(callback)));
         bot.deleteInlineMarkup(callback.getMessage());
-        bot.answerCallback(callback, null);
+        bot.answerCallback(callback);
         bot.sendText(callback.getMessage().getChatId(), "Пользователь удален");
     }
 }
