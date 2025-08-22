@@ -17,7 +17,7 @@ public class AddUserCommand extends AbstractCommandHandler {
 
     @Override
     public String getCommandDescription() {
-        return "Добавление пользователей";
+        return "Добавление доверенного пользователя";
     }
 
     @Override
