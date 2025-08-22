@@ -1,4 +1,4 @@
-package com.cheremnov.bot.command.security;
+package com.cheremnov.bot.security;
 
 import com.cheremnov.bot.db.trusted_user.TrustedUserRepository;
 import jakarta.annotation.PostConstruct;
