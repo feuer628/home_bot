@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  * @author gongtai.yin
  * @since 2021/08/18
  */
-public class DoorOpener {
+public class TuyaAdapter {
     private static final MediaType CONTENT_TYPE = MediaType.parse("application/json");
     private static final String EMPTY_HASH = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
     private static final String SING_HEADER_NAME = "Signature-Headers";
@@ -45,7 +45,6 @@ public class DoorOpener {
     // Tuya云endpoint
     private static String endpoint = "https://openapi.tuyaeu.com";
     private static String deviceId = "bfd57d128fb1cde2adejbg";
-    private static String token = "7c8a201904bb7431d63275ced2c25ab5";
 
     static {
         // 指定区域域名
@@ -54,23 +53,32 @@ public class DoorOpener {
         Constant.CONTAINER.put(Constant.ACCESS_KEY, accessKey);
     }
 
-    public static boolean open() {
-        String getTokenPath = "/v1.0/devices/" + deviceId + "/commands";
-        Map<String, Object> result = DoorOpener.execute(getTokenPath, "POST", "{\"commands\":[{\"code\":\"ipc_c_lock2\",\"value\":\"1\"}]}", new HashMap<>());
+    public static boolean openDoor() {
+        String commandPath = "/v1.0/devices/" + deviceId + "/commands";
+        Map<String, Object> result = TuyaAdapter.execute(getToken(), commandPath, "POST", "{\"commands\":[{\"code\":\"ipc_c_lock2\",\"value\":\"1\"}]}", new HashMap<>());
         return (boolean) result.get("success");
+    }
+
+    private static String getToken() {
+        String getTokenPath = "/v1.0/token?grant_type=1";
+        Map<String, Object> result = TuyaAdapter.execute(getTokenPath, "GET", "", new HashMap<>());
+        if ((boolean) result.get("success")) {
+            return ((Map<String, Object>) result.get("result")).get("access_token").toString();
+        }
+        return null;
     }
 
     /**
      * 用于获取令牌、刷新令牌：无Token请求
      */
-    public static Map<String, Object> execute(String path, String method, String body, Map<String, String> customHeaders) {
-        return DoorOpener.execute(token, path, method, body, customHeaders);
+    private static Map<String, Object> execute(String path, String method, String body, Map<String, String> customHeaders) {
+        return TuyaAdapter.execute("", path, method, body, customHeaders);
     }
 
     /**
      * 用于业务接口：携带Token请求
      */
-    public static Map<String, Object> execute(String accessToken, String path, String method, String body, Map<String, String> customHeaders) {
+    private static Map<String, Object> execute(String accessToken, String path, String method, String body, Map<String, String> customHeaders) {
         try {
             // 验证开发者信息
             if (MapUtils.isEmpty(Constant.CONTAINER)) {
@@ -110,7 +118,7 @@ public class DoorOpener {
      * @param accessToken 是否需要携带token
      * @param headerMap   自定义header
      */
-    public static Headers getHeader(String accessToken, Request request, String body, Map<String, String> headerMap) throws Exception {
+    private static Headers getHeader(String accessToken, Request request, String body, Map<String, String> headerMap) throws Exception {
         Headers.Builder hb = new Headers.Builder();
 
         Map<String, String> flattenHeaders = flattenHeaders(headerMap);
@@ -123,15 +131,15 @@ public class DoorOpener {
         hb.add("t", t);
 
 
-        hb.add("mode", "cors");
-        hb.add("Content-Type", "application/json");
+//        hb.add("mode", "cors");
+//        hb.add("Content-Type", "application/json");
 
 
         hb.add("sign_method", "HMAC-SHA256");
-        //hb.add("lang", "zh");
-        //hb.add(SING_HEADER_NAME, flattenHeaders.getOrDefault(SING_HEADER_NAME, ""));
+        hb.add("lang", "zh");
+        hb.add(SING_HEADER_NAME, flattenHeaders.getOrDefault(SING_HEADER_NAME, ""));
         String nonceStr = flattenHeaders.getOrDefault(Constant.NONCE_HEADER_NAME, "");
-        //hb.add(Constant.NONCE_HEADER_NAME, flattenHeaders.getOrDefault(Constant.NONCE_HEADER_NAME, ""));
+        hb.add(Constant.NONCE_HEADER_NAME, flattenHeaders.getOrDefault(Constant.NONCE_HEADER_NAME, ""));
         String stringToSign = stringToSign(request, body, flattenHeaders);
         if (StringUtils.isNotBlank(accessToken)) {
             hb.add("access_token", accessToken);
@@ -142,7 +150,7 @@ public class DoorOpener {
         return hb.build();
     }
 
-    public static String getPathAndSortParam(URL url) {
+    private static String getPathAndSortParam(URL url) {
         try {
             // supported the query contains zh-Han char
             String query = URLDecoder.decode(url.getQuery(), "UTF-8");
@@ -227,7 +235,7 @@ public class DoorOpener {
     /**
      * 处理get请求
      */
-    public static Request.Builder getRequest(String url) {
+    private static Request.Builder getRequest(String url) {
         Request.Builder request;
         try {
             request = new Request.Builder()
@@ -242,7 +250,7 @@ public class DoorOpener {
     /**
      * 处理post请求
      */
-    public static Request.Builder postRequest(String url, String body) {
+    private static Request.Builder postRequest(String url, String body) {
         Request.Builder request;
         try {
             request = new Request.Builder()
@@ -258,7 +266,7 @@ public class DoorOpener {
     /**
      * 处理put请求
      */
-    public static Request.Builder putRequest(String url, String body) {
+    private static Request.Builder putRequest(String url, String body) {
         Request.Builder request;
         try {
             request = new Request.Builder()
@@ -273,7 +281,7 @@ public class DoorOpener {
     /**
      * 处理delete请求
      */
-    public static Request.Builder deleteRequest(String url, String body) {
+    private static Request.Builder deleteRequest(String url, String body) {
         Request.Builder request;
         try {
             request = new Request.Builder()
@@ -288,7 +296,7 @@ public class DoorOpener {
     /**
      * 执行请求
      */
-    public static Response doRequest(Request request) {
+    private static Response doRequest(Request request) {
         Response response;
         try {
             response = getHttpClient().newCall(request).execute();
@@ -308,7 +316,7 @@ public class DoorOpener {
         return client;
     }
 
-    static class Constant {
+    private static class Constant {
         /**
          * 存储开发者信息容器
          */
@@ -325,7 +333,7 @@ public class DoorOpener {
         public static final String NONCE_HEADER_NAME = "nonce";
     }
 
-    static class Sha256Util {
+    private static class Sha256Util {
 
         public static String encryption(String str) throws Exception {
             return encryption(str.getBytes(StandardCharsets.UTF_8));
@@ -369,12 +377,8 @@ public class DoorOpener {
         }
     }
 
-    static class Result {
-        boolean success;
-    }
 
-
-    static class TuyaCloudSDKException extends RuntimeException {
+    private static class TuyaCloudSDKException extends RuntimeException {
 
         private Integer code;
 

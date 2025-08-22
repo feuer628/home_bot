@@ -16,7 +16,7 @@ public class DoorCallback implements ICallbackHandler {
     @Override
     public void handle(CallbackQuery callback, Bot bot) {
         try {
-            if (!DoorOpener.open()) {
+            if (!TuyaAdapter.openDoor()) {
                 bot.sendText(callback.getMessage().getChatId(), "Ошибка");
             }
         } catch (Exception e) {
