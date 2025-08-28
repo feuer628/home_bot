@@ -1,12 +1,10 @@
-package com.cheremnov.bot.command.user;
+package com.cheremnov.bot.command.group_chess;
 
 import com.cheremnov.bot.Bot;
 import com.cheremnov.bot.command.AbstractCommandHandler;
-import com.cheremnov.bot.db.trusted_user.TrustedUser;
-import com.cheremnov.bot.db.trusted_user.TrustedUserRepository;
+import com.cheremnov.bot.command.user.PaginationInfoModel;
 import com.cheremnov.bot.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -19,21 +17,24 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
-public class UserListCommand extends AbstractCommandHandler {
+public class GroupListCommand extends AbstractCommandHandler {
 
     @Autowired
-    public TrustedUserRepository trustedUserRepository;
-    @Autowired
-    ApplicationContext context;
+    private GroupRepository groupRepository;
+
+    @Override
+    public boolean isPublicCommand() {
+        return true;
+    }
 
     @Override
     public String getCommandName() {
-        return "user_list";
+        return "group_list";
     }
 
     @Override
     public String getCommandDescription() {
-        return "Список доверенных пользователей";
+        return "Список групп турнира";
     }
 
     @Override
@@ -45,30 +46,31 @@ public class UserListCommand extends AbstractCommandHandler {
     public InlineKeyboardMarkup getInlineKeyboard(int pageNumber) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         PageRequest pageRequest = PageRequest.of(pageNumber, 5);
-        Page<TrustedUser> trustedUsers = trustedUserRepository.findAll(pageRequest);
-        TrustedUserCallback trustedUserCallback = getBean(TrustedUserCallback.class);
-        List<List<InlineKeyboardButton>> userButton = new ArrayList<>();
-        trustedUsers.forEach(trustedUser -> {
+        Page<GroupTour> groups = groupRepository.findAll(pageRequest);
+
+        GroupCallback groupCallback = getBean(GroupCallback.class);
+        List<List<InlineKeyboardButton>> groupButton = new ArrayList<>();
+        groups.forEach(groupTour -> {
             PaginationInfoModel paginationInfoModel = new PaginationInfoModel();
-            paginationInfoModel.setEntityId(trustedUser.getId());
+            paginationInfoModel.setEntityId(groupTour.getId());
             paginationInfoModel.setPNum(pageRequest.getPageNumber());
-            userButton.add(Collections.singletonList(
-                    trustedUserCallback.getInlineButton(
-                            trustedUser.getName() == null ? "???" : trustedUser.getName(),
+            groupButton.add(Collections.singletonList(
+                    groupCallback.getInlineButton(
+                            groupTour.getName(),
                             JsonUtils.objectToString(paginationInfoModel))));
         });
         List<InlineKeyboardButton> navButton = new ArrayList<>();
-        UserListCallback callback = context.getBean(UserListCallback.class);
+        GroupListCallback callback = getBean(GroupListCallback.class);
         if (pageNumber > 0) {
             navButton.add(callback.getInlineButton("◀️ Назад", String.valueOf(pageNumber - 1)));
         }
-        if (pageNumber < trustedUsers.getTotalPages() - 1) {
+        if (pageNumber < groups.getTotalPages() - 1) {
             navButton.add(callback.getInlineButton("Далее ▶️", String.valueOf(pageNumber + 1)));
         }
         if (!navButton.isEmpty()) {
-            userButton.add(navButton);
+            groupButton.add(navButton);
         }
-        inlineKeyboardMarkup.setKeyboard(userButton);
+        inlineKeyboardMarkup.setKeyboard(groupButton);
         return inlineKeyboardMarkup;
     }
 }

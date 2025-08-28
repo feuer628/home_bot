@@ -30,16 +30,16 @@ public class TrustedUserCallback implements ICallbackHandler {
 
     @Override
     public void handle(CallbackQuery callback, Bot bot) {
-        TrustedUserInfoModel trustedUserInfoModel = JsonUtils.objectFromString(getCallbackInfo(callback), TrustedUserInfoModel.class);
-        TrustedUser trustedUser = trustedUserRepository.findById(trustedUserInfoModel.getUserId()).orElseThrow();
+        PaginationInfoModel paginationInfoModel = JsonUtils.objectFromString(getCallbackInfo(callback), PaginationInfoModel.class);
+        TrustedUser trustedUser = trustedUserRepository.findById(paginationInfoModel.getEntityId()).orElseThrow();
         String text = "Доверенный пользователь:\n\n✅ " + trustedUser.getName();
-        bot.editMessageText(callback.getMessage().getChatId(), callback.getMessage().getMessageId(), text, getInlineKeyboard(trustedUserInfoModel));
+        bot.editMessageText(callback.getMessage().getChatId(), callback.getMessage().getMessageId(), text, getInlineKeyboard(paginationInfoModel));
     }
 
-    private InlineKeyboardMarkup getInlineKeyboard(TrustedUserInfoModel trustedUserInfoModel) {
+    private InlineKeyboardMarkup getInlineKeyboard(PaginationInfoModel paginationInfoModel) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        inlineKeyboardMarkup.setKeyboard(Collections.singletonList(Arrays.asList(context.getBean(UserListCallback.class).getInlineButton("Назад", String.valueOf(trustedUserInfoModel.getPNum())),
-                context.getBean(DeleteUserCallback.class).getInlineButton(String.valueOf(trustedUserInfoModel.getUserId())))));
+        inlineKeyboardMarkup.setKeyboard(Collections.singletonList(Arrays.asList(context.getBean(UserListCallback.class).getInlineButton("Назад", String.valueOf(paginationInfoModel.getPNum())),
+                context.getBean(DeleteUserCallback.class).getInlineButton(String.valueOf(paginationInfoModel.getEntityId())))));
         return inlineKeyboardMarkup;
     }
 }
