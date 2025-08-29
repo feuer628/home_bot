@@ -1,16 +1,11 @@
-package com.cheremnov.bot.command.group_chess;
+package com.cheremnov.bot.command.chess;
 
 import com.cheremnov.bot.Bot;
 import com.cheremnov.bot.command.AbstractCallbackHandler;
-import com.cheremnov.bot.command.ICallbackHandler;
-import com.cheremnov.bot.command.user.DeleteUserCallback;
 import com.cheremnov.bot.command.user.PaginationInfoModel;
-import com.cheremnov.bot.command.user.UserListCallback;
-import com.cheremnov.bot.db.trusted_user.TrustedUser;
 import com.cheremnov.bot.security.UserChecker;
 import com.cheremnov.bot.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;

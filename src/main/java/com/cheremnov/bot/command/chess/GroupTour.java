@@ -1,5 +1,6 @@
-package com.cheremnov.bot.command.group_chess;
+package com.cheremnov.bot.command.chess;
 
+import com.cheremnov.bot.command.PageableModel;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,11 +11,11 @@ import java.util.List;
 
 @Entity
 @Data
-public class GroupTour {
+public class GroupTour implements PageableModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     private String name;
 

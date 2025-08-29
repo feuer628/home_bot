@@ -43,9 +43,9 @@ public interface ICallbackHandler {
         return button;
     }
 
-    default InlineKeyboardButton getInlineButton(String buttonText, String callbackData) {
+    default InlineKeyboardButton getInlineButton(String buttonText, String... callbackData) {
         InlineKeyboardButton button =  new InlineKeyboardButton(buttonText);
-        button.setCallbackData(callbackPrefix() + ":" + callbackData);
+        button.setCallbackData(callbackPrefix() + ":" + String.join(";", callbackData));
         return button;
     }
 
@@ -53,6 +53,11 @@ public interface ICallbackHandler {
         String data = callback.getData();
         int indexOf = data.indexOf(':');
         return indexOf >= 0 ? data.substring(indexOf + 1) : null;
+    }
+
+    default String[] getCallbacksInfo(CallbackQuery callback) {
+        String info = getCallbackInfo(callback);
+        return info == null ? new String[]{} : info.split(";");
     }
 
     void handle(CallbackQuery callback, Bot bot);

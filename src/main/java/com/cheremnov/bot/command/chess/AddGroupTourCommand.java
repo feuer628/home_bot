@@ -1,4 +1,4 @@
-package com.cheremnov.bot.command.group_chess;
+package com.cheremnov.bot.command.chess;
 
 import com.cheremnov.bot.Bot;
 import com.cheremnov.bot.command.AbstractCommandHandler;
