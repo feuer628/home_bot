@@ -44,16 +44,18 @@ public class GroupCallback extends AbstractCallbackHandler {
         if (chatIds == null) {
             chatIds = new ArrayList<>();
         }
-        bot.editMessageText(callback.getMessage().getChatId(), callback.getMessage().getMessageId(), text, getInlineKeyboard(callback.getFrom().getId(), paginationInfoModel, chatIds.contains(callback.getMessage().getChatId())));
+        bot.editMessageText(callback.getMessage().getChatId(), callback.getMessage().getMessageId(), text,
+                getInlineKeyboard(callback.getFrom().getId(), paginationInfoModel, chatIds.contains(callback.getMessage().getChatId()), groupTour.getCurrentTour() + 1, groupTour.getId()));
     }
 
-    private InlineKeyboardMarkup getInlineKeyboard(Long userId, PaginationInfoModel paginationInfoModel, boolean isSubscribe) {
+    private InlineKeyboardMarkup getInlineKeyboard(Long userId, PaginationInfoModel paginationInfoModel, boolean isSubscribe, int tour, long groupId) {
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
         keyboard.add( Arrays.asList(
                 getBean(GroupListCallback.class).getInlineButton("Назад", String.valueOf(paginationInfoModel.getPNum())),
                 getBean(SubscribeGroupCallback.class).getInlineButton(isSubscribe ? "Отписаться" : "Подписаться", String.valueOf(paginationInfoModel.getEntityId()))));
         if (userChecker.isUserTrusted(userId)) {
-            keyboard.add(Collections.singletonList(getBean(NextGroupTourCallback.class).getInlineButton("Объявить начало следующего тура", String.valueOf(paginationInfoModel.getEntityId()))));
+            keyboard.add(Collections.singletonList(getBean(DeleteGroupCallback.class).getInlineButton("Удалить группу", String.valueOf(groupId))));
+            keyboard.add(Collections.singletonList(getBean(NextGroupTourCallback.class).getInlineButton("Объявить начало " + tour + " тура", String.valueOf(paginationInfoModel.getEntityId()))));
         }
 
         return new InlineKeyboardMarkup(keyboard);
