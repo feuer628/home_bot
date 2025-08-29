@@ -1,5 +1,6 @@
 package com.cheremnov.bot.command.user;
 
+import com.cheremnov.bot.command.BackToListCallback;
 import com.cheremnov.bot.Bot;
 import com.cheremnov.bot.command.ICallbackHandler;
 import com.cheremnov.bot.db.trusted_user.TrustedUser;
@@ -38,7 +39,7 @@ public class TrustedUserCallback implements ICallbackHandler {
 
     private InlineKeyboardMarkup getInlineKeyboard(PaginationInfoModel paginationInfoModel) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        inlineKeyboardMarkup.setKeyboard(Collections.singletonList(Arrays.asList(context.getBean(UserListCallback.class).getInlineButton("Назад", String.valueOf(paginationInfoModel.getPNum())),
+        inlineKeyboardMarkup.setKeyboard(Collections.singletonList(Arrays.asList(context.getBean(BackToListCallback.class).getInlineButton("Назад", UserListCommand.class.getName(), String.valueOf(paginationInfoModel.getPNum())),
                 context.getBean(DeleteUserCallback.class).getInlineButton(String.valueOf(paginationInfoModel.getEntityId())))));
         return inlineKeyboardMarkup;
     }

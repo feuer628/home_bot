@@ -1,29 +1,32 @@
-package com.cheremnov.bot.command.user;
+package com.cheremnov.bot.command.chess;
 
 import com.cheremnov.bot.Bot;
 import com.cheremnov.bot.command.AbstractPagebleCommand;
-import com.cheremnov.bot.db.trusted_user.TrustedUser;
-import com.cheremnov.bot.db.trusted_user.TrustedUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 @Component
-public class UserListCommand extends AbstractPagebleCommand<TrustedUser> {
+public class GroupListCommand extends AbstractPagebleCommand<GroupTour> {
 
     @Autowired
-    public UserListCommand(TrustedUserRepository trustedUserRepository) {
-        super(trustedUserRepository, TrustedUserCallback.class);
+    public GroupListCommand(GroupRepository repository) {
+        super(repository, GroupCallback.class);
+    }
+
+    @Override
+    public boolean isPublicCommand() {
+        return true;
     }
 
     @Override
     public String getCommandName() {
-        return "user_list";
+        return "group_list";
     }
 
     @Override
     public String getCommandDescription() {
-        return "Список доверенных пользователей";
+        return "Список групп турнира";
     }
 
     @Override
