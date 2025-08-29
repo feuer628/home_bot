@@ -2,7 +2,7 @@ package com.cheremnov.bot.command.user;
 
 import com.cheremnov.bot.Bot;
 import com.cheremnov.bot.command.ICallbackHandler;
-import com.cheremnov.bot.command.security.UserChecker;
+import com.cheremnov.bot.security.UserChecker;
 import com.cheremnov.bot.db.subscibers.Subscriber;
 import com.cheremnov.bot.db.subscibers.SubscriberRepository;
 import com.cheremnov.bot.db.trusted_user.TrustedUser;

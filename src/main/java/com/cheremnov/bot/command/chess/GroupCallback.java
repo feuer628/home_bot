@@ -1,0 +1,58 @@
+package com.cheremnov.bot.command.chess;
+
+import com.cheremnov.bot.Bot;
+import com.cheremnov.bot.command.AbstractCallbackHandler;
+import com.cheremnov.bot.command.user.PaginationInfoModel;
+import com.cheremnov.bot.security.UserChecker;
+import com.cheremnov.bot.utils.JsonUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+@Component
+public class GroupCallback extends AbstractCallbackHandler {
+
+    @Autowired
+    private UserChecker userChecker;
+
+    @Autowired
+    private GroupRepository groupRepository;
+
+    @Override
+    public String callbackPrefix() {
+        return "group";
+    }
+
+    @Override
+    public void handleCallback(CallbackQuery callback, Bot bot) {
+        PaginationInfoModel paginationInfoModel = JsonUtils.objectFromString(getCallbackInfo(callback), PaginationInfoModel.class);
+        GroupTour groupTour = groupRepository.findById(paginationInfoModel.getEntityId()).orElseThrow();
+        String text = "Группа: " + groupTour.getName();
+        List<Long> chatIds = groupTour.getSubscriberChatIds();
+        if (chatIds == null) {
+            chatIds = new ArrayList<>();
+        }
+        bot.editMessageText(callback.getMessage().getChatId(), callback.getMessage().getMessageId(), text,
+                getInlineKeyboard(callback.getFrom().getId(), paginationInfoModel, chatIds.contains(callback.getMessage().getChatId()), groupTour.getCurrentTour() + 1, groupTour.getId()));
+    }
+
+    private InlineKeyboardMarkup getInlineKeyboard(Long userId, PaginationInfoModel paginationInfoModel, boolean isSubscribe, int tour, long groupId) {
+        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+        keyboard.add( Arrays.asList(
+                getBean(GroupListCallback.class).getInlineButton("Назад", String.valueOf(paginationInfoModel.getPNum())),
+                getBean(SubscribeGroupCallback.class).getInlineButton(isSubscribe ? "Отписаться" : "Подписаться", String.valueOf(paginationInfoModel.getEntityId()))));
+        if (userChecker.isUserTrusted(userId)) {
+            keyboard.add(Collections.singletonList(getBean(DeleteGroupCallback.class).getInlineButton("Удалить группу", String.valueOf(groupId))));
+            keyboard.add(Collections.singletonList(getBean(NextGroupTourCallback.class).getInlineButton("Объявить начало " + tour + " тура", String.valueOf(paginationInfoModel.getEntityId()))));
+        }
+
+        return new InlineKeyboardMarkup(keyboard);
+    }
+}

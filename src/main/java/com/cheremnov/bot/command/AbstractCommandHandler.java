@@ -1,7 +1,7 @@
 package com.cheremnov.bot.command;
 
 import com.cheremnov.bot.Bot;
-import com.cheremnov.bot.command.security.UserChecker;
+import com.cheremnov.bot.security.UserChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -37,6 +37,8 @@ public abstract class AbstractCommandHandler {
             bot.sendText(message.getChatId(), "Вы не имеете право на выполнение этой команды");
             return;
         }
+        // если пришла команда, то удаляем обработчики старых сообщений
+        bot.deleteMessageHandler(message.getChatId());
         handleCommand(message, bot);
     }
 
