@@ -37,6 +37,8 @@ public abstract class AbstractCommandHandler {
             bot.sendText(message.getChatId(), "Вы не имеете право на выполнение этой команды");
             return;
         }
+        // если пришла команда, то удаляем обработчики старых сообщений
+        bot.deleteMessageHandler(message.getChatId());
         handleCommand(message, bot);
     }
 
