@@ -25,16 +25,16 @@ public class AddUserHandler extends AbstractMessageHandler {
     public SubscriberRepository subscriberRepository;
 
     @Override
-    public void handleMessage(Message message, Bot bot) {
+    public boolean handleMessage(Message message, Bot bot) {
         // тут должно быть пересланное сообщение
         User forwardUser = message.getForwardFrom();
         if (forwardUser == null) {
             bot.sendText(message.getChatId(), "Вы должны переслать сообщение от пользователя, которого хотите добавить в список доверенных");
-            return;
+            return false;
         }
         if (forwardUser.getIsBot()) {
             bot.sendText(message.getChatId(), "Ботов нельзя добавлять в список доверенных");
-            return;
+            return false;
         }
         String fio = String.join(" ", forwardUser.getFirstName(), forwardUser.getLastName());
         String userName = forwardUser.getUserName() == null ?
@@ -44,7 +44,7 @@ public class AddUserHandler extends AbstractMessageHandler {
         subscriber.setName(fio);
         if (trustedUserRepository.existsById(subscriber.getId())) {
             bot.sendText(message.getChatId(), "Пользователь " + subscriber.getName() + " уже добавлен в список доверенных");
-            return;
+            return false;
         }
         if (!subscriberRepository.existsById(subscriber.getId())) {
             subscriberRepository.save(subscriber);
@@ -57,6 +57,7 @@ public class AddUserHandler extends AbstractMessageHandler {
 
 
         bot.sendText(message.getChatId(), MessageFormat.format(pattern, fio, forwardUser.getId().toString(), userName), getInlineBottoms(subscriber.getId()));
+        return true;
     }
 
     private InlineKeyboardMarkup getInlineBottoms(long userId) {

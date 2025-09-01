@@ -17,9 +17,10 @@ public abstract class AbstractMessageHandler {
     }
 
     public final void handle(Message message, Bot bot) {
-        handleMessage(message, bot);
-        bot.deleteMessageHandler(message.getChatId());
+        if (handleMessage(message, bot)){
+            bot.deleteMessageHandler(message.getChatId());
+        }
     }
 
-    public abstract void handleMessage(Message message, Bot bot);
+    public abstract boolean handleMessage(Message message, Bot bot);
 }

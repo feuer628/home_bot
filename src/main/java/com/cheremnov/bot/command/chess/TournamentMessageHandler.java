@@ -13,12 +13,12 @@ public class TournamentMessageHandler extends AbstractMessageHandler {
     private GroupRepository groupRepository;
 
     @Override
-    public void handleMessage(Message message, Bot bot) {
+    public boolean handleMessage(Message message, Bot bot) {
         String text = message.getText();
         String[] tournament = text.split("-");
         if (tournament.length != 2) {
             bot.sendText(message.getChatId(), "Неверный формат сообщения");
-            throw new RuntimeException("Неверный формат сообщения");
+            return false;
         }
         int tourCount = Integer.parseInt(tournament[1].trim());
         GroupTour groupTour = new GroupTour();
@@ -26,5 +26,6 @@ public class TournamentMessageHandler extends AbstractMessageHandler {
         groupTour.setName(tournament[0].trim());
         groupRepository.save(groupTour);
         bot.sendText(message.getChatId(), "Добавлена группа турнира: " + groupTour.getName());
+        return true;
     }
 }
