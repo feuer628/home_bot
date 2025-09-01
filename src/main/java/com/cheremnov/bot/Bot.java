@@ -35,8 +35,9 @@ public class Bot extends TelegramLongPollingBot {
 
     private static final AbstractMessageHandler defaultMessageHandler = new AbstractMessageHandler() {
         @Override
-        public void handleMessage(Message message, Bot bot) {
+        public boolean handleMessage(Message message, Bot bot) {
             bot.sendText(message.getChatId(), "Ничего не понимаю...");
+            return false;
         }
     };
     private final Map<String, ICallbackHandler> prefixCallbacks = new ConcurrentHashMap<>();
@@ -93,8 +94,8 @@ public class Bot extends TelegramLongPollingBot {
             handleCallback(update.getCallbackQuery());
             return;
         }
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            String text = update.getMessage().getText().trim();
+        if (update.hasMessage()) {
+            String text = update.getMessage().hasText() ? update.getMessage().getText().trim() : "";
             if (text.startsWith("/")) {
                 String cmd = text.split(" ")[0].substring(1); // "start" from "/start args"
                 AbstractCommandHandler handler = commandHandlers.get(cmd);

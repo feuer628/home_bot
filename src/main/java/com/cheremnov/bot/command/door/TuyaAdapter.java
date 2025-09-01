@@ -59,6 +59,11 @@ public class TuyaAdapter {
         return (boolean) result.get("success");
     }
 
+    public static Map<String, Object> getStatus() {
+        String commandPath = "/v1.0/devices/" + deviceId;
+        return (Map<String, Object>) TuyaAdapter.execute(getToken(), commandPath, "GET", null, new HashMap<>()).get("result");
+    }
+
     private static String getToken() {
         String getTokenPath = "/v1.0/token?grant_type=1";
         Map<String, Object> result = TuyaAdapter.execute(getTokenPath, "GET", "", new HashMap<>());
@@ -224,7 +229,6 @@ public class TuyaAdapter {
             sb.append(nonce);
         }
         sb.append(stringToSign);
-        System.out.println(sb);
         return Sha256Util.sha256HMAC(sb.toString(), secret);
     }
 
