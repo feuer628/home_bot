@@ -12,11 +12,13 @@ import java.util.Map;
 public class DoorStatusSchedule {
 
     /**
-     * �������� � ������� �������� �� ����� ����������� ������� ��������� (� �������������)
+     * Интервал, в течении которого не будет отправляться повторные сообщения об отключении домофона
      */
-    private static final Integer INTERVAL = 6 * 60 * 60 * 1000; // 6 �����
+    private static final Integer INTERVAL = 6 * 60 * 60 * 1000; // 6 часов
 
     private static Long lastSendTime;
+
+    private boolean isOffline = false;
 
     @Autowired
     private MessageSender messageSender;
@@ -25,14 +27,20 @@ public class DoorStatusSchedule {
     public void performRegularTask() {
         try {
             Map<String, Object> statusInfo = TuyaAdapter.getStatus();
-            if (!(boolean) statusInfo.get("online")) {
+            if ((boolean) statusInfo.get("online")) {
+                if (isOffline) {
+                    isOffline = false;
+                    messageSender.sendAllTrustedUsers("Домофон онлайн!");
+                }
+            } else {
+                isOffline = true;
                 if (lastSendTime == null || (System.currentTimeMillis() - INTERVAL) > lastSendTime) {
-                    messageSender.sendAllTrustedUsers("������� �������...");
+                    messageSender.sendAllTrustedUsers("Домофон оффлайн...");
                     lastSendTime = System.currentTimeMillis();
                 }
             }
         } catch (Exception e) {
-            messageSender.sendAllTrustedUsers("������ ��������� ������� ��������: " + e.getMessage());
+            messageSender.sendAllTrustedUsers("Ошибка при получении статуса домофона: " + e.getMessage());
             throw e;
         }
     }

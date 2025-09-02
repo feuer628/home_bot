@@ -7,6 +7,8 @@ import com.cheremnov.bot.db.trusted_user.TrustedUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class MessageSender {
 
@@ -24,6 +26,12 @@ public class MessageSender {
             subscriberRepository.findById(trustedUser.getId()).ifPresent(
                     subscriber -> sendToSubscriber(subscriber, message));
         });
+    }
+
+    public void sendSubscribers(String message, List<Long> subscriberIds) {
+        if (subscriberIds != null) {
+            subscriberRepository.findAllById(subscriberIds).forEach(subscriber -> sendToSubscriber(subscriber, message));
+        }
     }
 
     public void sendAllSubscribers(String message) {
