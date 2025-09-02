@@ -33,11 +33,7 @@ public class NextGroupTourCallback extends AbstractCallbackHandler {
         if (subscriberChatIds != null) {
             subscriberChatIds.forEach(chatId -> bot.sendText(chatId, finalS + currentTour + " тур"));
         }
-        if (currentTour >= groupTour.getTourCount()) {
-            groupRepository.deleteById(groupTour.getId());
-        } else {
-            groupRepository.save(groupTour);
-        }
+        groupRepository.save(groupTour);
         bot.deleteInlineMarkup(callback.getMessage());
     }
 }
