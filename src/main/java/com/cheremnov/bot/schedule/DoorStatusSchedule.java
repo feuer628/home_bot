@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -27,7 +28,7 @@ public class DoorStatusSchedule {
     public void performRegularTask() {
         try {
             Map<String, Object> statusInfo = TuyaAdapter.getStatus();
-            if ((boolean) statusInfo.get("online")) {
+            if ((boolean) statusInfo.get("online") && Boolean.TRUE == getStatusInfo(statusInfo, "ipc_ch1")) {
                 if (isOffline) {
                     isOffline = false;
                     messageSender.sendAllTrustedUsers("Домофон онлайн!");
@@ -43,5 +44,14 @@ public class DoorStatusSchedule {
             messageSender.sendAllTrustedUsers("Ошибка при получении статуса домофона: " + e.getMessage());
             throw e;
         }
+    }
+
+    private Object getStatusInfo(Map<String, Object> statusInfo, String name) {
+        for (Map<String, Object> map : (List<Map<String, Object>>) statusInfo.get("status")) {
+            if (name.equals(map.get("code"))) {
+                return map.get("value");
+            }
+        }
+        return null;
     }
 }
