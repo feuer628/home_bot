@@ -18,10 +18,11 @@ public class GroupTour implements PageableModel {
     private Long id;
 
     private String name;
-
     private Integer tourCount;
-
     private int currentTour;
-
     private List<Long> subscriberChatIds;
+
+    public String getName() {
+        return name + " (" + tourCount + ")";
+    }
 }
