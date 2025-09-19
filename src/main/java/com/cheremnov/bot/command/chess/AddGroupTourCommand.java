@@ -20,7 +20,7 @@ public class AddGroupTourCommand extends AbstractCommandHandler {
 
     @Override
     public void handleCommand(Message message, Bot bot) {
-        bot.sendText(message.getChatId(), "Пришлите название группы турнира и количество туров в формате <Название группы тура> - <кол-во туров>.\n" +
+        bot.sendText(message.getChatId(), "Пришлите название группы турнира и количество туров в формате <Название группы тура> - <кол-во туров> (допускается указание нескольких турниров с новой строки).\n" +
                 "Например:\n M11 - 9");
         bot.setMessageHandler(message.getChatId(), getBean(TournamentMessageHandler.class));
     }
