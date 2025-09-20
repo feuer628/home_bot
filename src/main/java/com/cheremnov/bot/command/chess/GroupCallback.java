@@ -55,7 +55,7 @@ public class GroupCallback extends AbstractCallbackHandler {
             keyboard.add(Collections.singletonList(getBean(SendMessageToGroupCallback.class).getInlineButton("Отправить сообщение в группу", String.valueOf(groupId))));
             keyboard.add(Collections.singletonList(getBean(DeleteGroupCallback.class).getInlineButton("Удалить группу", String.valueOf(groupId))));
             if (groupTour.getCurrentTour() < groupTour.getTourCount()) {
-                keyboard.add(Collections.singletonList(getBean(NextGroupTourCallback.class).getInlineButton("Объявить начало " + tour + " тура", String.valueOf(paginationInfoModel.getEntityId()))));
+                keyboard.add(Collections.singletonList(getBean(NextGroupTourCallback.class).getInlineButton("Объявить начало " + tour + " тура", String.valueOf(paginationInfoModel.getEntityId()), String.valueOf(paginationInfoModel.getPNum()))));
             }
         }
 

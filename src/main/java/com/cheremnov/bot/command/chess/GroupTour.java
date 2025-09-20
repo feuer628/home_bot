@@ -24,4 +24,8 @@ public class GroupTour implements PageableModel {
     private int currentTour;
 
     private List<Long> subscriberChatIds;
+
+    public String getNameWithCount() {
+        return name + " (" + tourCount + ")";
+    }
 }
