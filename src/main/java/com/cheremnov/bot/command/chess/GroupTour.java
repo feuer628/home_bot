@@ -22,7 +22,7 @@ public class GroupTour implements PageableModel {
     private int currentTour;
     private List<Long> subscriberChatIds;
 
-    public String getName() {
+    public String getNameWithCount() {
         return name + " (" + tourCount + ")";
     }
 }

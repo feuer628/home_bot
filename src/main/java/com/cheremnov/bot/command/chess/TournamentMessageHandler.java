@@ -41,7 +41,7 @@ public class TournamentMessageHandler extends AbstractMessageHandler {
         }
         StringBuilder textToSend = new StringBuilder("Добавлены группы турнира: ");
         groupTours.forEach(groupTour -> {
-                    textToSend.append(groupTour.getName()).append("; ");
+                    textToSend.append(groupTour.getNameWithCount()).append("; ");
                     groupRepository.save(groupTour);
                 }
         );

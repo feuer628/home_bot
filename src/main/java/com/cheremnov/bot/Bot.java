@@ -36,7 +36,7 @@ public class Bot extends TelegramLongPollingBot {
     private static final AbstractMessageHandler defaultMessageHandler = new AbstractMessageHandler() {
         @Override
         public boolean handleMessage(Message message, Bot bot) {
-            bot.sendText(message.getChatId(), "Ничего не понимаю...");
+            bot.sendText(message.getChatId(), "Для ознакомления с возможностями бота используйте команду /help");
             return false;
         }
     };

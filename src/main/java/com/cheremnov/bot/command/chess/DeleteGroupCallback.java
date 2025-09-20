@@ -19,8 +19,8 @@ public class DeleteGroupCallback extends AbstractCallbackHandler {
 
     @Override
     public void handleCallback(CallbackQuery callback, Bot bot) {
-        bot.deleteInlineMarkup(callback.getMessage());
         groupRepository.deleteById(Long.valueOf(getCallbackInfo(callback)));
-        bot.sendText(callback.getMessage().getChatId(), "Группа удалена");
+        callback.setData(callbackPrefix() + ":0");
+        getBean(GroupListCallback.class).handleCallback(callback, bot);
     }
 }

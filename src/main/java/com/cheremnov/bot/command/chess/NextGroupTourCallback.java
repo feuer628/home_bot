@@ -21,7 +21,10 @@ public class NextGroupTourCallback extends AbstractCallbackHandler {
 
     @Override
     public void handleCallback(CallbackQuery callback, Bot bot) {
-        GroupTour groupTour = groupRepository.findById(Long.valueOf(getCallbackInfo(callback))).orElseThrow();
+        String[] params = getCallbacksInfo(callback);
+        long tourId = Long.parseLong(params[0]);
+        String pageNumber = params[1];
+        GroupTour groupTour = groupRepository.findById(tourId).orElseThrow();
         int currentTour = groupTour.getCurrentTour() + 1;
         groupTour.setCurrentTour(currentTour);
         String s = "В группе " + groupTour.getName() + " начался ";
@@ -34,6 +37,7 @@ public class NextGroupTourCallback extends AbstractCallbackHandler {
             subscriberChatIds.forEach(chatId -> bot.sendText(chatId, finalS + currentTour + " тур"));
         }
         groupRepository.save(groupTour);
-        bot.deleteInlineMarkup(callback.getMessage());
+        callback.setData(callbackPrefix() + ":" + pageNumber);
+        getBean(GroupListCallback.class).handleCallback(callback, bot);
     }
 }
