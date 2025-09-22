@@ -59,9 +59,9 @@ public class TuyaAdapter {
         return (boolean) result.get("success");
     }
 
-    public static Map<String, Object> getStatus() {
+    public static Map<String, Object> getDeviceInfo() {
         String commandPath = "/v1.0/devices/" + deviceId;
-        return (Map<String, Object>) TuyaAdapter.execute(getToken(), commandPath, "GET", null, new HashMap<>()).get("result");
+        return (Map<String, Object>) TuyaAdapter.execute(getToken(), commandPath, "GET", null, new HashMap<>());
     }
 
     private static String getToken() {

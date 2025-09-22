@@ -2,6 +2,7 @@ package com.cheremnov.bot.schedule;
 
 import com.cheremnov.bot.command.door.TuyaAdapter;
 import com.cheremnov.bot.messages.MessageSender;
+import com.cheremnov.bot.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -27,18 +28,23 @@ public class DoorStatusSchedule {
     @Scheduled(fixedRate = 1000 * 60)
     public void performRegularTask() {
         try {
-            Map<String, Object> statusInfo = TuyaAdapter.getStatus();
-            if ((boolean) statusInfo.get("online") && Boolean.TRUE == getStatusInfo(statusInfo, "ipc_ch1")) {
-                if (isOffline) {
-                    isOffline = false;
-                    messageSender.sendAllTrustedUsers("Домофон онлайн!");
+            Map<String, Object> deviceInfo = TuyaAdapter.getDeviceInfo();
+            if ((boolean) deviceInfo.get("success")) {
+                Map<String, Object> statusInfo = (Map<String, Object>) TuyaAdapter.getDeviceInfo().get("result");
+                if ((boolean) statusInfo.get("online") && Boolean.TRUE == getStatusInfo(statusInfo, "ipc_ch1")) {
+                    if (isOffline) {
+                        isOffline = false;
+                        messageSender.sendAllTrustedUsers("Домофон онлайн!");
+                    }
+                } else {
+                    isOffline = true;
+                    if (lastSendTime == null || (System.currentTimeMillis() - INTERVAL) > lastSendTime) {
+                        messageSender.sendAllTrustedUsers("Домофон оффлайн...");
+                        lastSendTime = System.currentTimeMillis();
+                    }
                 }
             } else {
-                isOffline = true;
-                if (lastSendTime == null || (System.currentTimeMillis() - INTERVAL) > lastSendTime) {
-                    messageSender.sendAllTrustedUsers("Домофон оффлайн...");
-                    lastSendTime = System.currentTimeMillis();
-                }
+                messageSender.sendAllTrustedUsers("Ответ на запрос статуса домофона пришел с ошибкой: \n" + JsonUtils.objectToString(deviceInfo));
             }
         } catch (Exception e) {
             messageSender.sendAllTrustedUsers("Ошибка при получении статуса домофона: " + e.getMessage());
