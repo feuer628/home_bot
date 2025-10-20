@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ public class DoorStatusSchedule {
 
     private boolean isOffline = false;
 
+    private static final Map<String, Long> messageTimeSend = new HashMap<>();
     @Autowired
     private MessageSender messageSender;
 
@@ -38,17 +40,26 @@ public class DoorStatusSchedule {
                     }
                 } else {
                     isOffline = true;
-                    if (lastSendTime == null || (System.currentTimeMillis() - INTERVAL) > lastSendTime) {
-                        messageSender.sendAllTrustedUsers("Домофон оффлайн...");
-                        lastSendTime = System.currentTimeMillis();
-                    }
+                    sendTimedMessage("Домофон оффлайн...");
                 }
             } else {
-                messageSender.sendAllTrustedUsers("Ответ на запрос статуса домофона пришел с ошибкой: \n" + JsonUtils.objectToString(deviceInfo));
+                sendTimedMessage("Ответ на запрос статуса домофона пришел с ошибкой: \n" + JsonUtils.objectToString(deviceInfo), String.valueOf(deviceInfo.get("code")));
             }
         } catch (Exception e) {
-            messageSender.sendAllTrustedUsers("Ошибка при получении статуса домофона: " + e.getMessage());
+            sendTimedMessage("Ошибка при получении статуса домофона: " + e.getMessage());
             throw e;
+        }
+    }
+
+    private void sendTimedMessage(String message) {
+        sendTimedMessage(message, message);
+    }
+
+    private void sendTimedMessage(String message, String key) {
+        Long lastSendTime = messageTimeSend.get(key);
+        if (lastSendTime == null || (System.currentTimeMillis() - INTERVAL) > lastSendTime) {
+            messageSender.sendAllTrustedUsers(message);
+            messageTimeSend.put(key, System.currentTimeMillis());
         }
     }
 

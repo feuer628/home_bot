@@ -54,13 +54,13 @@ public class TuyaAdapter {
     }
 
     public static boolean openDoor() {
-        String commandPath = "/v1.0/devices/" + deviceId + "/commands";
+        String commandPath = "/v2.0/cloud/thing/" + deviceId + "/shadow/actions";
         Map<String, Object> result = TuyaAdapter.execute(getToken(), commandPath, "POST", "{\"commands\":[{\"code\":\"ipc_c_lock2\",\"value\":\"1\"}]}", new HashMap<>());
         return (boolean) result.get("success");
     }
 
     public static Map<String, Object> getDeviceInfo() {
-        String commandPath = "/v1.0/devices/" + deviceId;
+        String commandPath = "/v2.0/cloud/thing/" + deviceId;
         return (Map<String, Object>) TuyaAdapter.execute(getToken(), commandPath, "GET", null, new HashMap<>());
     }
 
@@ -136,8 +136,8 @@ public class TuyaAdapter {
         hb.add("t", t);
 
 
-//        hb.add("mode", "cors");
-//        hb.add("Content-Type", "application/json");
+        hb.add("mode", "cors");
+        hb.add("Content-Type", "application/json");
 
 
         hb.add("sign_method", "HMAC-SHA256");
