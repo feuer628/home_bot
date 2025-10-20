@@ -11,6 +11,11 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 public class AddUserCommand extends AbstractCommandHandler {
 
     @Override
+    public boolean isCommandHidden() {
+        return true;
+    }
+
+    @Override
     public String getCommandName() {
         return "add_user";
     }

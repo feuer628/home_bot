@@ -11,6 +11,10 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 @Component
 public class UserListCommand extends AbstractPagebleCommand<TrustedUser> {
 
+    public boolean isCommandHidden() {
+        return true;
+    }
+
     @Autowired
     public UserListCommand(TrustedUserRepository trustedUserRepository) {
         super(trustedUserRepository, TrustedUserCallback.class);

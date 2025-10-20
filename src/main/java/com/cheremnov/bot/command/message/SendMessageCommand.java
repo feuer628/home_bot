@@ -8,6 +8,10 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 @Component
 public class SendMessageCommand extends AbstractCommandHandler {
 
+    public boolean isCommandHidden() {
+        return true;
+    }
+
     @Override
     public String getCommandName() {
         return "message";

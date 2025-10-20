@@ -3,6 +3,9 @@ package com.cheremnov.bot;
 import com.cheremnov.bot.command.AbstractCommandHandler;
 import com.cheremnov.bot.command.AbstractMessageHandler;
 import com.cheremnov.bot.command.ICallbackHandler;
+import com.cheremnov.bot.db.subscibers.Subscriber;
+import com.cheremnov.bot.db.subscibers.SubscriberRepository;
+import com.cheremnov.bot.db.trusted_user.TrustedUserRepository;
 import com.cheremnov.bot.exception.BotBlockedException;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +34,13 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @Service
 public class Bot extends TelegramLongPollingBot {
+
+
+    @Autowired
+    private TrustedUserRepository trustedUserRepository;
+
+    @Autowired
+    private SubscriberRepository subscriberRepository;
 
 
     private static final AbstractMessageHandler defaultMessageHandler = new AbstractMessageHandler() {
@@ -193,6 +203,29 @@ public class Bot extends TelegramLongPollingBot {
                 throw new BotBlockedException(e);
             }
             throw new RuntimeException(e);
+        }
+    }
+
+    public void sendAllTrustedUsers(String message) {
+        trustedUserRepository.findAll().forEach(trustedUser -> {
+            subscriberRepository.findById(trustedUser.getId()).ifPresent(
+                    subscriber -> sendToSubscriber(subscriber, message));
+        });
+    }
+
+    public void sendSubscribers(String message, List<Long> subscriberIds) {
+        if (subscriberIds != null) {
+            subscriberRepository.findAllById(subscriberIds).forEach(subscriber -> sendToSubscriber(subscriber, message));
+        }
+    }
+
+    public void sendAllSubscribers(String message) {
+        subscriberRepository.findAll().forEach(subscriber -> sendToSubscriber(subscriber, message));
+    }
+
+    private void sendToSubscriber(Subscriber subscriber, String message) {
+        if (subscriber.getChatId() != null) {
+            sendText(subscriber.getChatId(), message);
         }
     }
 
