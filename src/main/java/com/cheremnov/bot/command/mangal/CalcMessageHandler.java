@@ -5,6 +5,8 @@ import com.cheremnov.bot.command.AbstractMessageHandler;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
+import java.text.DecimalFormat;
+
 @Component
 public class CalcMessageHandler extends AbstractMessageHandler {
 
@@ -22,13 +24,16 @@ public class CalcMessageHandler extends AbstractMessageHandler {
 
 
             // считаем стоимость металла: объем * 7850 * 100 рублей
-            double sumMetall = objom() * 7850 * 100;
+            double sumMetall = objom(l, d, h) * 7850 * 100;
+            System.out.println("sumMetall = " + sumMetall);
 
             // считаем длину реза четверки: общая длинна реза * 90 рублей
-            double sumReza = lRez4() * 90;
+            double sumReza = lRez4(l, d, h) * 90;
+            System.out.println("sumReza = " + sumReza);
 
             // считаем длину реза двойки: общая длинна реза * 90 рублей
-            double sumReza2 = lRez2() * 60;
+            double sumReza2 = lRez2(l) * 60;
+            System.out.println("sumReza2 = " + sumReza2);
 
             // стоимость корпуса двигателя
             double sumDvig = 1400;
@@ -45,7 +50,12 @@ public class CalcMessageHandler extends AbstractMessageHandler {
             // мне
             double mne = 5000;
             double itogo = sumMetall + sumReza + sumReza2 + sumDvig + sumSureshki + svarshik + mne;
-            bot.sendText(message.getChatId(), "Сумма мангала с размерами " + String.join("; ", split[0], split[1], split[2]) + " :\n" + itogo,
+            // Округляем до ближайшей сотни
+            long roundedNumber = Math.round(itogo / 100) * 100;
+            // Форматируем строку с использованием DecimalFormat
+            DecimalFormat df = new DecimalFormat("#,##0");
+
+            bot.sendText(message.getChatId(), "Сумма мангала с размерами " + String.join("; ", split[0], split[1], split[2]) + ":\n" + df.format(roundedNumber),
                     getBean(MangalOrderCallbackHandler.class).getSingleButton("Заказать мангал", message.getText()));
 
         } catch (NumberFormatException e) {
@@ -55,18 +65,30 @@ public class CalcMessageHandler extends AbstractMessageHandler {
         return true;
     }
 
-    private double lRez4() {
-        // TODO
-        return 0;
+    private double lRez4(double l, double d, double h) {
+        int k = (int) (l / 64.1);
+        return ((l + h * 2 + l * 2.05) + // передняя стенка
+                (d * 2 + h * 2.5) * 2 + // боковые стенки
+                (l * 2 + d * 2) + // дно
+                (l * 2 + h * 2 + 89 * k + 40 * 4 + 48 * 3) +//задняя стенка
+                (l * 4.1) +// задняя стенка с отверстиями
+                (l*3.5) +// верхняя пластина над звездочками
+                (k * 163 * 4))/1000; //кругляшки около звездочек (считаем по более крупной звезде)
     }
 
-    private double lRez2() {
-        // TODO
-        return 0;
+    private double lRez2(double l) {
+        // в длине реза 2 мм считаем только звездочки (2 штуки на привод и несколько на сам мангал)
+        double lZvezdi = 328; //мм
+        int count = (int) (2 + l / 64.1);
+        return lZvezdi * count / 1000;
     }
 
-    private double objom() {
-        // TODO
-        return 0;
+    private double objom(double l, double d, double h) {
+        double v = (l * h + // передняя стенка
+                d * h * 2 + // две боковые стенки
+                l * d + // дно
+                l * (h + 60 + 60 + h + 25) // задняя стенка со всеми прилегающими деталями
+        ) * 4; // мм^3
+        return v / 1000000000;// объем возвращаем в кубометрах
     }
 }
