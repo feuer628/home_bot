@@ -21,3 +21,6 @@ logging:
   level:
     org.hibernate.SQL: INFO
     org.hibernate.type.descriptor.sql.BasicBinder: INFO
+    org.springframework.web: INFO
+  file:
+    name: "logs/home_bot.log"
