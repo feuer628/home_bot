@@ -23,8 +23,8 @@ public class CalcMessageHandler extends AbstractMessageHandler {
             double h = Double.parseDouble(split[2]);
 
 
-            // считаем стоимость металла: объем * 7850 * 100 рублей
-            double sumMetall = objom(l, d, h) * 7850 * 100;
+            // считаем стоимость металла: площадь * 2600  рублей за квадрат
+            double sumMetall = square(l, d, h) * 2600;
             System.out.println("sumMetall = " + sumMetall);
 
             // считаем длину реза четверки: общая длинна реза * 90 рублей
@@ -72,8 +72,9 @@ public class CalcMessageHandler extends AbstractMessageHandler {
                 (l * 2 + d * 2) + // дно
                 (l * 2 + h * 2 + 89 * k + 40 * 4 + 48 * 3) +//задняя стенка
                 (l * 4.1) +// задняя стенка с отверстиями
-                (l*3.5) +// верхняя пластина над звездочками
-                (k * 163 * 4))/1000; //кругляшки около звездочек (считаем по более крупной звезде)
+                (l * 3.5) +// верхняя пластина над звездочками
+                (l * 6) + // опоры под сетку
+                (k * 163 * 4)) / 1000; //кругляшки около звездочек (считаем по более крупной звезде)
     }
 
     private double lRez2(double l) {
@@ -83,12 +84,13 @@ public class CalcMessageHandler extends AbstractMessageHandler {
         return lZvezdi * count / 1000;
     }
 
-    private double objom(double l, double d, double h) {
-        double v = (l * h + // передняя стенка
-                d * h * 2 + // две боковые стенки
-                l * d + // дно
-                l * (h + 60 + 60 + h + 25) // задняя стенка со всеми прилегающими деталями
-        ) * 4; // мм^3
-        return v / 1000000000;// объем возвращаем в кубометрах
+    private double square(double l, double d, double h) {
+        return (l + d)*(l + d)/1000000;
+//        double v = (l * h + // передняя стенка
+//                d * h * 2 + // две боковые стенки
+//                l * d + // дно
+//                l * (h + 60 + 60 + h + 25) // задняя стенка со всеми прилегающими деталями
+//        ); // мм^2
+//        return v / 1000000;// площадь возвращаем в квадратных метрах
     }
 }

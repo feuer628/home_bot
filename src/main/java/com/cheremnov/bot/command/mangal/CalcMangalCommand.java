@@ -11,6 +11,10 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 @Component
 public class CalcMangalCommand extends AbstractCommandHandler {
 
+    @Override
+    public boolean isPublicCommand() {
+        return true;
+    }
 
     @Override
     public String getCommandName() {

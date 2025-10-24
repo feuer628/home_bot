@@ -24,6 +24,7 @@ public class StartBot {
             TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
             Bot bot = context.getBean(Bot.class);
             telegramBotsApi.registerBot(bot);
+            log.info("Приложение инициализировано");
         } catch (Exception e) {
             log.error("Ошибка при инициализации бота", e);
             throw new RuntimeException(e);
