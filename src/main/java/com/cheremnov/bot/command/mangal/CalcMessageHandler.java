@@ -25,16 +25,10 @@ public class CalcMessageHandler extends AbstractMessageHandler {
 
             // считаем стоимость металла: площадь * 2600  рублей за квадрат
             double sumMetall = square(l, d, h) * 2600;
-            System.out.println("sumMetall = " + sumMetall);
-
             // считаем длину реза четверки: общая длинна реза * 90 рублей
             double sumReza = lRez4(l, d, h) * 90;
-            System.out.println("sumReza = " + sumReza);
-
             // считаем длину реза двойки: общая длинна реза * 90 рублей
             double sumReza2 = lRez2(l) * 60;
-            System.out.println("sumReza2 = " + sumReza2);
-
             // стоимость корпуса двигателя
             double sumDvig = 1400;
             // шурешки:
