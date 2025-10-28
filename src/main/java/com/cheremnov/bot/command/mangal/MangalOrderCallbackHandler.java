@@ -16,6 +16,8 @@ public class MangalOrderCallbackHandler extends AbstractCallbackHandler {
 
     @Override
     public void handleCallback(CallbackQuery callback, Bot bot) {
+        bot.deleteInlineMarkup(callback.getMessage());
+        bot.sendText(callback.getMessage().getChatId(), "Заявка отправлена, в ближайшее время с Вами свяжутся для подтверждения заказа.");
         User from = callback.getFrom();
         bot.sendAllTrustedUsers("Поступила заявка на мангал - " + getCallbackInfo(callback) +
                 "\nПользователь: @" + from.getUserName() +

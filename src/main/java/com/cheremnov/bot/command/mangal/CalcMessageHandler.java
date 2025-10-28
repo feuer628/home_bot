@@ -48,9 +48,9 @@ public class CalcMessageHandler extends AbstractMessageHandler {
             long roundedNumber = Math.round(itogo / 100) * 100;
             // Форматируем строку с использованием DecimalFormat
             DecimalFormat df = new DecimalFormat("#,##0");
-
+            String msg = message.getText() + "\nСумма: " + df.format(roundedNumber);
             bot.sendText(message.getChatId(), "Сумма мангала с размерами " + String.join("; ", split[0], split[1], split[2]) + ":\n" + df.format(roundedNumber),
-                    getBean(MangalOrderCallbackHandler.class).getSingleButton("Заказать мангал", message.getText()));
+                    getBean(MangalOrderCallbackHandler.class).getSingleButton("Заказать мангал", msg));
 
         } catch (NumberFormatException e) {
             bot.sendText(message.getChatId(), "Неверный формат размеров");
