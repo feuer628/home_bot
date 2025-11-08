@@ -7,6 +7,15 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 
 @Component
 public class HelpCommand extends AbstractCommandHandler {
+
+    protected static final String HELP_TEXT = """
+                Этот бот разработан для расчета цены, а также заказа автоматического мангала.
+               
+                Для расчета цены используйте команду /calc
+                
+                После расчета цены, Вы сможете заказать мангал.
+                """;
+
     @Override
     public String getCommandName() {
         return "help";
@@ -24,17 +33,11 @@ public class HelpCommand extends AbstractCommandHandler {
 
     @Override
     public String getCommandDescription() {
-        return "";
+        return null;
     }
 
     @Override
     public void handleCommand(Message message, Bot bot) {
-        bot.sendText(message.getChatId(), """
-                Этот бот разработан для расчета цены, а также заказа автоматического мангала.
-               
-                Для расчета цены используйте команду /calc
-                
-                После расчета цены, Вы сможете заказать мангал.
-                """);
+        bot.sendText(message.getChatId(), HELP_TEXT);
     }
 }
