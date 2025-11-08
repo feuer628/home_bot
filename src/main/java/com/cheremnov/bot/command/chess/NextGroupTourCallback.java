@@ -33,10 +33,10 @@ public class NextGroupTourCallback extends AbstractCallbackHandler {
         }
         String finalS = s;
         List<Long> subscriberChatIds = groupTour.getSubscriberChatIds();
+        groupRepository.save(groupTour);
         if (subscriberChatIds != null) {
             subscriberChatIds.forEach(chatId -> bot.sendText(chatId, finalS + currentTour + " тур"));
         }
-        groupRepository.save(groupTour);
         callback.setData(callbackPrefix() + ":" + pageNumber);
         getBean(GroupListCallback.class).handleCallback(callback, bot);
     }
