@@ -3,7 +3,6 @@ package com.cheremnov.bot;
 import com.cheremnov.bot.command.AbstractCommandHandler;
 import com.cheremnov.bot.command.AbstractMessageHandler;
 import com.cheremnov.bot.command.ICallbackHandler;
-import com.cheremnov.bot.exception.BotBlockedException;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,11 +41,9 @@ public class Bot extends TelegramLongPollingBot {
     };
     private final Map<String, ICallbackHandler> prefixCallbacks = new ConcurrentHashMap<>();
     private final Map<String, AbstractCommandHandler> commandHandlers = new ConcurrentHashMap<>();
-
+    private final Map<Long, AbstractMessageHandler> messageHandlers = new ConcurrentHashMap<>();
     @Autowired
     private Handlers handlers;
-
-    private final Map<Long, AbstractMessageHandler> messageHandlers = new ConcurrentHashMap<>();
 
 
     @Autowired
@@ -190,9 +187,10 @@ public class Bot extends TelegramLongPollingBot {
             execute(m);
         } catch (TelegramApiException e) {
             if (e.getMessage().contains("bot was blocked by the user")) {
-                throw new BotBlockedException(e);
+                log.warn("Попытка отправить сообщение в заблокированный чат: {}.", chatId);
+            } else {
+                throw new RuntimeException(e);
             }
-            throw new RuntimeException(e);
         }
     }
 
