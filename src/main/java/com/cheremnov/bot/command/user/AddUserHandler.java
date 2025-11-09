@@ -14,6 +14,9 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 public class AddUserHandler extends AbstractMessageHandler {
@@ -36,27 +39,29 @@ public class AddUserHandler extends AbstractMessageHandler {
             bot.sendText(message.getChatId(), "Ботов нельзя добавлять в список доверенных");
             return false;
         }
-        String fio = String.join(" ", forwardUser.getFirstName(), forwardUser.getLastName());
-        String userName = forwardUser.getUserName() == null ?
-                "" : "UserName: @" + forwardUser.getUserName() + "\n";
-        Subscriber subscriber = new Subscriber();
-        subscriber.setId(forwardUser.getId());
-        subscriber.setName(fio);
-        if (trustedUserRepository.existsById(subscriber.getId())) {
-            bot.sendText(message.getChatId(), "Пользователь " + subscriber.getName() + " уже добавлен в список доверенных");
+        String fio = Stream.of(forwardUser.getFirstName(), forwardUser.getLastName()).filter(Objects::nonNull).collect(Collectors.joining(" "));
+        Subscriber trustedUser = new Subscriber();
+        trustedUser.setId(forwardUser.getId());
+        trustedUser.setName(fio);
+        return addUserToBd(message, bot, trustedUser);
+    }
+
+    public boolean addUserToBd(Message message, Bot bot, Subscriber trustedUser) {
+        if (trustedUserRepository.existsById(trustedUser.getId())) {
+            bot.sendText(message.getChatId(), "Пользователь " + trustedUser.getName() + " уже добавлен в список доверенных");
             return false;
         }
-        if (!subscriberRepository.existsById(subscriber.getId())) {
-            subscriberRepository.save(subscriber);
+        if (!subscriberRepository.existsById(trustedUser.getId())) {
+            subscriberRepository.save(trustedUser);
         }
         String pattern = """
                 Вы дествительно хотете добавить пользователя
                 ФИО: {0}
                 UserId: {1}
-                {2} в список доверенных пользователей?""";
+                в список доверенных пользователей?""";
 
 
-        bot.sendText(message.getChatId(), MessageFormat.format(pattern, fio, forwardUser.getId().toString(), userName), getInlineBottoms(subscriber.getId()));
+        bot.sendText(message.getChatId(), MessageFormat.format(pattern, trustedUser.getName(), String.valueOf(trustedUser.getId())), getInlineBottoms(trustedUser.getId()));
         return true;
     }
 
