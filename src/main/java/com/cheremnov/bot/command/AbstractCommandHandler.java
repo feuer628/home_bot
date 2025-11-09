@@ -43,4 +43,8 @@ public abstract class AbstractCommandHandler {
     }
 
     public abstract void handleCommand(Message message, Bot bot);
+
+    protected boolean hasText(Message message) {
+        return message.hasText() && !message.getText().trim().equals("/"+ getCommandName());
+    }
 }
