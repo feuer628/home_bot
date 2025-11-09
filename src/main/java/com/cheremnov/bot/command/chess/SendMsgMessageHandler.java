@@ -16,13 +16,17 @@ public class SendMsgMessageHandler extends AbstractMessageHandler {
     @Setter
     private List<Long> subscriberChatIds;
 
+    @Setter
+    private String groupName;
+
     @Autowired
     private MessageSender messageSender;
 
     @Override
     public boolean handleMessage(Message message, Bot bot) {
+        String messageText = "Группа " + groupName + ":\n\n" + message.getText();
         if (subscriberChatIds != null) {
-            subscriberChatIds.forEach(chatId -> bot.sendText(chatId, message.getText()));
+            subscriberChatIds.forEach(chatId -> bot.sendText(chatId, messageText));
         }
         return true;
     }

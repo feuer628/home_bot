@@ -22,6 +22,7 @@ public class SendMessageToGroupCallback extends AbstractCallbackHandler {
         GroupTour groupTour = groupRepository.findById(Long.valueOf(getCallbackInfo(callback))).orElseThrow();
         bot.sendText(callback.getMessage().getChatId(), "Отправьте в этот чат сообщение, которое хотите отправить в группу " + groupTour.getName());
         SendMsgMessageHandler messageHandler = getBean(SendMsgMessageHandler.class);
+        messageHandler.setGroupName(groupTour.getName());
         messageHandler.setSubscriberChatIds(groupTour.getSubscriberChatIds());
         bot.setMessageHandler(callback.getMessage().getChatId(), messageHandler);
         bot.deleteInlineMarkup(callback.getMessage());
