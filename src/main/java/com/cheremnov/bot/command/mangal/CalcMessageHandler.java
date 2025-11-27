@@ -43,7 +43,15 @@ public class CalcMessageHandler extends AbstractMessageHandler {
             double svarshik = 5000;
             // мне
             double mne = 5000;
-            double itogo = sumMetall + sumReza + sumReza2 + sumDvig + sumSureshki + svarshik + mne;
+
+            // рассчитываем коэффициент мангала:
+            // за единицу берем 75см длина и 45см ширина,
+            // мангал меньше этого все равно будет рассчитан по единице
+            // далее пропорционально увеличиваем стоимость
+            double koefL = Math.max(l / 800, 1);
+            double koefD = Math.max(d / 450, 1);
+
+            double itogo = sumMetall + sumReza + sumReza2 + sumDvig + (sumSureshki + svarshik + mne) * koefL * koefD;
             // Округляем до ближайшей сотни
             long roundedNumber = Math.round(itogo / 100) * 100;
             // Форматируем строку с использованием DecimalFormat
@@ -79,7 +87,7 @@ public class CalcMessageHandler extends AbstractMessageHandler {
     }
 
     private double square(double l, double d, double h) {
-        return (l + d)*(l + d)/1000000;
+        return (l + d) * (l + d) / 1000000;
 //        double v = (l * h + // передняя стенка
 //                d * h * 2 + // две боковые стенки
 //                l * d + // дно
