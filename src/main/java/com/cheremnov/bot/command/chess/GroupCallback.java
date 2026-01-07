@@ -57,6 +57,9 @@ public class GroupCallback extends AbstractCallbackHandler {
             if (groupTour.getCurrentTour() < groupTour.getTourCount()) {
                 keyboard.add(Collections.singletonList(getBean(NextGroupTourCallback.class).getInlineButton("Объявить начало " + tour + " тура", String.valueOf(paginationInfoModel.getEntityId()), String.valueOf(paginationInfoModel.getPNum()))));
             }
+            if (groupTour.getCurrentTour() >= 1) {
+                keyboard.add(Collections.singletonList(getBean(CancelGroupTourCallback.class).getInlineButton("Отменить последний тур", String.valueOf(paginationInfoModel.getEntityId()), String.valueOf(paginationInfoModel.getPNum()))));
+            }
         }
 
         return new InlineKeyboardMarkup(keyboard);
