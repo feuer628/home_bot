@@ -1,45 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <!-- имя бота/инстанса можно передавать через -DAPP_NAME=... -->
-    <property name="APP_NAME" value="${APP_NAME:-home_bot}"/>
+    <property name="APP_NAME" value="${APP_NAME:-logic_bot}"/>
 
-    <property name="LOG_FILE" value="logs/home_bot.log"/>
+    <property name="LOG_DIR" value="logs"/>
+    <property name="LOG_FILE" value="${LOG_DIR}/app.log"/>
 
+    <!-- CONSOLE: только то, что мы явно подключим (Tomcat) -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss} %-5level [${APP_NAME}] [%thread] [%logger{40}] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- FILE: пишем все логи + stacktrace -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_FILE}</file>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/home_bot.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>30</maxHistory>
+            <fileNamePattern>${LOG_DIR}/app.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>14</maxHistory>
         </rollingPolicy>
 
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%logger{80}] - %msg%n%ex</pattern>
         </encoder>
     </appender>
 
-    <!-- Консоль: выводим ТОЛЬКО INFO -->
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>INFO</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
-        </filter>
-
-        <encoder>
-            <!-- метка бота в каждой строке -->
-            <pattern>%d{HH:mm:ss} %-5level [${APP_NAME}] %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
-
-    <!-- уровни -->
-    <logger name="org.hibernate.SQL" level="INFO"/>
-    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="INFO"/>
-    <logger name="org.springframework.web" level="INFO"/>
-
+    <!-- ВАЖНО:
+         root -> ТОЛЬКО в файл (консоли тут нет) -->
     <root level="INFO">
         <appender-ref ref="FILE"/>
-        <appender-ref ref="CONSOLE"/>
     </root>
+
+    <!-- Tomcat/Spring embedded tomcat -> в консоль (и при желании в файл тоже через additivity) -->
+    <logger name="org.springframework" level="INFO" additivity="true">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <logger name="org.apache" level="INFO" additivity="true">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <logger name="org.hibernate" level="INFO" additivity="true">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </logger>
+
 </configuration>
