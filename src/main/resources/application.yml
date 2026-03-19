@@ -16,8 +16,3 @@ token:
 
 server:
   port: 8083
-
-logging:
-  level:
-    org.hibernate.SQL: INFO
-    org.hibernate.type.descriptor.sql.BasicBinder: INFO
