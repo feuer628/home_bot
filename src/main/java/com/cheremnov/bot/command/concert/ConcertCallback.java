@@ -3,7 +3,7 @@ package com.cheremnov.bot.command.concert;
 import com.cheremnov.bot.Bot;
 import com.cheremnov.bot.command.ICallbackHandler;
 import com.cheremnov.bot.command.concert.db.ConcertNumberRepository;
-import com.cheremnov.bot.command.security.UserChecker;
+import com.cheremnov.bot.security.UserChecker;
 import com.cheremnov.bot.db.subscibers.SubscriberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
