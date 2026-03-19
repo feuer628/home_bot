@@ -16,10 +16,3 @@ token:
 
 server:
   port: 8081
-
-logging:
-  level:
-    org.hibernate: INFO
-    org.springframework.web: INFO
-  file:
-    name: "logs/home_bot.log"

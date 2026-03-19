@@ -10,6 +10,8 @@ import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
@@ -28,6 +30,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
@@ -69,7 +72,11 @@ public class Bot extends TelegramLongPollingBot {
         for (AbstractCommandHandler commandHandler : handlers.getCommandHandlers()) {
             commandHandlers.put(commandHandler.getCommandName(), commandHandler);
         }
-        setMenuCommands();
+    }
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void onReady() {
+        CompletableFuture.runAsync(this::setMenuCommands);
     }
 
     private void setMenuCommands() {
@@ -87,7 +94,7 @@ public class Bot extends TelegramLongPollingBot {
         try {
             execute(menu);
         } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+            log.error("Ошибка установки меню", e);
         }
     }
 
