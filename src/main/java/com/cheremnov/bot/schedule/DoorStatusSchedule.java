@@ -27,13 +27,13 @@ public class DoorStatusSchedule {
     @Autowired
     private MessageSender messageSender;
 
-    @Scheduled(fixedRate = 1000 * 60)
+    @Scheduled(fixedRate = 1000 * 600)
     public void performRegularTask() {
         try {
             Map<String, Object> deviceInfo = TuyaAdapter.getDeviceInfo();
             if ((boolean) deviceInfo.get("success")) {
-                Map<String, Object> statusInfo = (Map<String, Object>) TuyaAdapter.getDeviceInfo().get("result");
-                if ((boolean) statusInfo.get("online") && Boolean.TRUE == getStatusInfo(statusInfo, "ipc_ch1")) {
+                Map<String, Object> statusInfo = (Map<String, Object>) deviceInfo.get("result");
+                if ((boolean) statusInfo.get("is_online")) {
                     if (isOffline) {
                         isOffline = false;
                         messageSender.sendAllTrustedUsers("Домофон онлайн!");
@@ -61,14 +61,5 @@ public class DoorStatusSchedule {
             messageSender.sendAllTrustedUsers(message);
             messageTimeSend.put(key, System.currentTimeMillis());
         }
-    }
-
-    private Object getStatusInfo(Map<String, Object> statusInfo, String name) {
-        for (Map<String, Object> map : (List<Map<String, Object>>) statusInfo.get("status")) {
-            if (name.equals(map.get("code"))) {
-                return map.get("value");
-            }
-        }
-        return null;
     }
 }

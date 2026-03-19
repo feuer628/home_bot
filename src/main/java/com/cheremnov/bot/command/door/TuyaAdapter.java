@@ -53,15 +53,47 @@ public class TuyaAdapter {
         Constant.CONTAINER.put(Constant.ACCESS_KEY, accessKey);
     }
 
-    public static boolean openDoor() {
+    /**
+     * Раньше работал метод, потом перестал
+     * @return
+     */
+    public static boolean openDoor_() {
         String commandPath = "/v2.0/cloud/thing/" + deviceId + "/shadow/actions";
         Map<String, Object> result = TuyaAdapter.execute(getToken(), commandPath, "POST", "{\"commands\":[{\"code\":\"ipc_c_lock2\",\"value\":\"1\"}]}", new HashMap<>());
         return (boolean) result.get("success");
     }
 
+    public static boolean openDoor() {
+        String commandPath = "/v1.0/iot-03/devices/" + deviceId + "/commands";
+        Map<String, Object> result = executePost(commandPath, "{\"commands\":[{\"code\":\"ipc_c_lock2\",\"value\":\"1\"}]}");
+        return (boolean) result.get("success");
+    }
+
     public static Map<String, Object> getDeviceInfo() {
         String commandPath = "/v2.0/cloud/thing/" + deviceId;
-        return (Map<String, Object>) TuyaAdapter.execute(getToken(), commandPath, "GET", null, new HashMap<>());
+        return executeGet(commandPath);
+    }
+
+    private static Map<String, Object> executePost(String commandPath, String body) {
+        Map<String, Object> resp = TuyaAdapter.execute(getToken(), commandPath, "POST", body, new HashMap<>());
+        if (isTokenExpired(resp)) {
+            String newToken = getToken();
+            resp = TuyaAdapter.execute(newToken, commandPath, "POST", body, new HashMap<>());
+        }
+        return resp;
+    }
+
+    private static Map<String, Object> executeGet(String commandPath) {
+        Map<String, Object> resp = TuyaAdapter.execute(getToken(), commandPath, "GET", null, new HashMap<>());
+        if (isTokenExpired(resp)) {
+            String newToken = getToken();
+            resp = TuyaAdapter.execute(newToken, commandPath, "GET", null, new HashMap<>());
+        }
+        return resp;
+    }
+
+    private static boolean isTokenExpired(Map<String, Object> resp) {
+        return !(boolean) resp.get("success") && "1010".equals(String.valueOf(resp.get("code")));
     }
 
     private static String getToken() {
