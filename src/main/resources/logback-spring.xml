@@ -1,45 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <!-- имя бота/инстанса можно передавать через -DAPP_NAME=... -->
-    <property name="APP_NAME" value="${APP_NAME:-home_bot}"/>
+    <property name="LOG_PATH" value="logs"/>
 
-    <property name="LOG_FILE" value="logs/home_bot.log"/>
-
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_FILE}</file>
-
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/home_bot.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
-
-    <!-- Консоль: выводим ТОЛЬКО INFO -->
+    <!-- ============ CONSOLE (без ошибок) ============ -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+
+        <!-- Показывать в консоли только INFO (ни WARN, ни ERROR) -->
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>INFO</level>
             <onMatch>ACCEPT</onMatch>
             <onMismatch>DENY</onMismatch>
         </filter>
 
+        <!-- Даже если кто-то залогирует exception на INFO, в консоль stacktrace не выведем -->
         <encoder>
-            <!-- метка бота в каждой строке -->
-            <pattern>%d{HH:mm:ss} %-5level [${APP_NAME}] %logger{36} - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss} %-5level [%thread] [%logger{36}] - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <!-- уровни -->
-    <logger name="org.hibernate.SQL" level="INFO"/>
-    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="INFO"/>
-    <logger name="org.springframework.web" level="INFO"/>
+    <!-- ============ FILE (всё подряд) ============ -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/app.log</file>
 
-    <root level="INFO">
-        <appender-ref ref="FILE"/>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/app.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <!-- %ex = stacktrace целиком -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%logger{80}] - %msg%n%ex</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Root пишет и туда, и туда. CONSOLE сам отфильтрует всё кроме INFO -->
+    <root level="TRACE">
         <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
     </root>
+
 </configuration>
