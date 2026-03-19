@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
+    <property name="APP_NAME" value="${APP_NAME:-mangal_bot}"/>
+
     <property name="LOG_DIR" value="logs"/>
     <property name="LOG_FILE" value="${LOG_DIR}/app.log"/>
 
     <!-- CONSOLE: только то, что мы явно подключим (Tomcat) -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss} %-5level [%thread] [%logger{40}] - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss} %-5level [${APP_NAME}] [%thread] [%logger{40}] - %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -38,11 +40,6 @@
     </logger>
 
     <logger name="org.apache" level="INFO" additivity="true">
-        <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="FILE"/>
-    </logger>
-
-    <logger name="com.cheremnov.bot.StartBot" level="INFO" additivity="true">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
     </logger>
