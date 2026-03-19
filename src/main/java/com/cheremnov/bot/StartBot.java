@@ -24,7 +24,6 @@ public class StartBot {
             telegramBotsApi.registerBot(bot);
         } catch (Exception e) {
             log.error("Ошибка при инициализации бота", e);
-            throw new RuntimeException(e);
         }
     }
 
