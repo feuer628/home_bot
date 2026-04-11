@@ -13,6 +13,13 @@ spring:
       path: /h2-console
 
 token:
+telegram:
+  proxy:
+    enabled: true
+    host: t.bifit.com
+    port: 49910
+    user: t_users
+    password:
 
 server:
   port: 8081
