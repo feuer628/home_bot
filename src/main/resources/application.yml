@@ -16,9 +16,9 @@ token:
 telegram:
   proxy:
     enabled: true
-    host: t.bifit.com
-    port: 49910
-    user: t_users
+    host:
+    port:
+    user:
     password:
 
 server:
