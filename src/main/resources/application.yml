@@ -13,6 +13,13 @@ spring:
       path: /h2-console
 
 token:
+telegram:
+  proxy:
+    enabled: true
+    host:
+    port:
+    user:
+    password:
 
 server:
   port: 8081
