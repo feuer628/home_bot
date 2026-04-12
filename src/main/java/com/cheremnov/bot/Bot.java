@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
@@ -52,8 +53,9 @@ public class Bot extends TelegramLongPollingBot {
 
 
     @Autowired
-    public Bot(@Value("${token}") String botToken) {
-        super(botToken);
+    public Bot(DefaultBotOptions options,
+               @Value("${token}") String botToken) {
+        super(options, botToken);
     }
 
     @PostConstruct
