@@ -27,7 +27,7 @@ public class CalcMessageHandler extends AbstractMessageHandler {
             double sumMetall = square(l, d, h) * 2600;
             // считаем длину реза четверки: общая длинна реза * 90 рублей
             double sumReza = lRez4(l, d, h) * 90;
-            // считаем длину реза двойки: общая длинна реза * 90 рублей
+            // считаем длину реза двойки: общая длинна реза * 60 рублей
             double sumReza2 = lRez2(l) * 60;
             // стоимость корпуса двигателя
             double sumDvig = 1400;
@@ -41,6 +41,8 @@ public class CalcMessageHandler extends AbstractMessageHandler {
             double sumSureshki = 3500;
             // работа сварщика
             double svarshik = 5000;
+            // окрашивание мангала
+            double pokraska = 1500;
             // мне
             double mne = 5000;
 
@@ -51,13 +53,15 @@ public class CalcMessageHandler extends AbstractMessageHandler {
             double koefL = Math.max(l / 800, 1);
             double koefD = Math.max(d / 450, 1);
 
-            double itogo = sumMetall + sumReza + sumReza2 + sumDvig + (sumSureshki + svarshik + mne) * koefL * koefD;
+            double itogo = sumMetall + sumReza + sumReza2 + sumDvig + (sumSureshki + svarshik + mne + pokraska) * koefL * koefD;
             // Округляем до ближайшей сотни
             long roundedNumber = Math.round(itogo / 100) * 100;
             // Форматируем строку с использованием DecimalFormat
             DecimalFormat df = new DecimalFormat("#,##0");
             String msg = message.getText() + "\nСумма: " + df.format(roundedNumber);
-            bot.sendText(message.getChatId(), "Сумма мангала с размерами " + String.join("; ", split[0], split[1], split[2]) + ":\n" + df.format(roundedNumber),
+            bot.sendText(message.getChatId(), "Сумма мангала с размерами " + String.join("; ", split[0], split[1], split[2]) + ":\n" + df.format(roundedNumber) + "\n" +
+                    "Сумма носит ознакомительный характер и может быть изменена в момент заказа при изменении цен на комплектующие" + "\n" +
+                            (l > 1500 ? "При заказе мангала больших размеров могут быть корпоративные скидки" : ""),
                     getBean(MangalOrderCallbackHandler.class).getSingleButton("Заказать мангал", msg));
 
         } catch (NumberFormatException e) {
