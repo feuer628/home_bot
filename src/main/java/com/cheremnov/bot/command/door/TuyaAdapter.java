@@ -44,7 +44,10 @@ public class TuyaAdapter {
     private static String accessKey = "3bf4f19e17cd4576b41b5b957ad21532";
     // Tuya云endpoint
     private static String endpoint = "https://openapi.tuyaeu.com";
-    private static String deviceId = "bfd57d128fb1cde2adejbg";
+
+    private static final String DOOR_DEVICE_ID = "bfd57d128fb1cde2adejbg";
+    private static final String GATE_DEVICE_ID = "bf7aea8d728eaf00bb2ztn";
+
 
     static {
         // 指定区域域名
@@ -58,19 +61,37 @@ public class TuyaAdapter {
      * @return
      */
     public static boolean openDoor_() {
-        String commandPath = "/v2.0/cloud/thing/" + deviceId + "/shadow/actions";
+        String commandPath = "/v2.0/cloud/thing/" + DOOR_DEVICE_ID + "/shadow/actions";
         Map<String, Object> result = TuyaAdapter.execute(getToken(), commandPath, "POST", "{\"commands\":[{\"code\":\"ipc_c_lock2\",\"value\":\"1\"}]}", new HashMap<>());
         return (boolean) result.get("success");
     }
 
+    public static boolean openGate() {
+        String commandPath = "/v1.0/devices/" + GATE_DEVICE_ID + "/commands";
+        Map<String, Object> result = executePost(commandPath, "{commands:[{code:\"wfh_open\",value:true}]}");
+        return (boolean) result.get("success");
+    }
+
+    public static boolean closeGate() {
+        String commandPath = "/v1.0/iot-03/devices/" + GATE_DEVICE_ID + "/commands";
+        Map<String, Object> result = executePost(commandPath, "{commands:[{code:\"wfh_close\",value:true}]}");
+        return (boolean) result.get("success");
+    }
+
+    public static boolean stopGate() {
+        String commandPath = "/v1.0/devices/" + GATE_DEVICE_ID + "/commands";
+        Map<String, Object> result = executePost(commandPath, "{commands:[{code:\"wfh_stop\",value:true}]}");
+        return (boolean) result.get("success");
+    }
+
     public static boolean openDoor() {
-        String commandPath = "/v1.0/iot-03/devices/" + deviceId + "/commands";
+        String commandPath = "/v1.0/iot-03/devices/" + DOOR_DEVICE_ID + "/commands";
         Map<String, Object> result = executePost(commandPath, "{\"commands\":[{\"code\":\"ipc_c_lock2\",\"value\":\"1\"}]}");
         return (boolean) result.get("success");
     }
 
     public static Map<String, Object> getDeviceInfo() {
-        String commandPath = "/v2.0/cloud/thing/" + deviceId;
+        String commandPath = "/v2.0/cloud/thing/" + DOOR_DEVICE_ID;
         return executeGet(commandPath);
     }
 
