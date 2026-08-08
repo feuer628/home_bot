@@ -30,6 +30,34 @@ public class AliceController {
         return ResponseEntity.ok("{\"status\":\"ok\"}");
     }
 
+    @PostMapping("/open-gate")
+    public ResponseEntity<String> openGate(@RequestBody OpenDoorRequest request) {
+        log.info("Поступил запрос на открытие ворот с колонки: {}", request.getEntityId());
+
+        if (TuyaAdapter.openGate()) {
+            aliceService.sendToSpecificAlice(request.getEntityId(), "Ворота открылись");
+        } else {
+            // Отправляем ошибку на ту же колонку, а не всем
+            aliceService.sendToSpecificAlice(request.getEntityId(),
+                    "Возникли сложности, ворота не открылись");
+        }
+        return ResponseEntity.ok("{\"status\":\"ok\"}");
+    }
+
+    @PostMapping("/close-gate")
+    public ResponseEntity<String> closeGate(@RequestBody OpenDoorRequest request) {
+        log.info("Поступил запрос на закрытие ворот с колонки: {}", request.getEntityId());
+
+        if (TuyaAdapter.closeGate()) {
+            aliceService.sendToSpecificAlice(request.getEntityId(), "Ворота закрылись");
+        } else {
+            // Отправляем ошибку на ту же колонку, а не всем
+            aliceService.sendToSpecificAlice(request.getEntityId(),
+                    "Возникли сложности, ворота не закрылись");
+        }
+        return ResponseEntity.ok("{\"status\":\"ok\"}");
+    }
+
     // DTO для запроса
     @Data
     public static class OpenDoorRequest {
