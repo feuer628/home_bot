@@ -83,6 +83,24 @@ public class AliceController {
         return ResponseEntity.ok("{\"status\":\"ok\"}");
     }
 
+    @PostMapping("/stop-gate")
+    public ResponseEntity<String> stopGate(@RequestBody OpenDoorRequest request,
+                                           @RequestHeader(value = "X-API-Token", required = false) String token) {
+        if (!validateToken(token)) {
+            log.warn("❌ Неавторизованная попытка остановки ворот. IP: {}, Token: {}",
+                    getRequestIp(), token != null ? "***" + token.substring(token.length() - 4) : "отсутствует");
+            return ResponseEntity.status(401).body("{\"error\":\"Unauthorized\"}");
+        }
+
+        log.info("✅ Запрос на остановку ворот с колонки: {}", request.getEntityId());
+        if (TuyaAdapter.stopGate()) {
+            aliceService.sendToSpecificAlice(request.getEntityId(), "Ворота остановлены");
+        } else {
+            aliceService.sendToSpecificAlice(request.getEntityId(), "Возникли сложности, ворота не остановились");
+        }
+        return ResponseEntity.ok("{\"status\":\"ok\"}");
+    }
+
     // Вспомогательный метод для логирования IP
     private String getRequestIp() {
         try {
