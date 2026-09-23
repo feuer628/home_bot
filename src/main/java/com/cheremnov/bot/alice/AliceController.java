@@ -40,9 +40,9 @@ public class AliceController {
 
         log.info("✅ Запрос на открытие калитки с колонки: {}", request.getEntityId());
         if (TuyaAdapter.openDoor()) {
-            aliceService.sendToSpecificAlice(request.getEntityId(), "Калитка открылась");
+            sendToAlice(request.getEntityId(), "Калитка открылась");
         } else {
-            aliceService.sendToSpecificAlice(request.getEntityId(), "Возникли сложности, калитка не открылась");
+            sendToAlice(request.getEntityId(), "Возникли сложности, калитка не открылась");
         }
         return ResponseEntity.ok("{\"status\":\"ok\"}");
     }
@@ -58,9 +58,9 @@ public class AliceController {
 
         log.info("✅ Запрос на открытие ворот с колонки: {}", request.getEntityId());
         if (TuyaAdapter.openGate()) {
-            aliceService.sendToSpecificAlice(request.getEntityId(), "Ворота открылись");
+            sendToAlice(request.getEntityId(), "Ворота открылись");
         } else {
-            aliceService.sendToSpecificAlice(request.getEntityId(), "Возникли сложности, ворота не открылись");
+            sendToAlice(request.getEntityId(), "Возникли сложности, ворота не открылись");
         }
         return ResponseEntity.ok("{\"status\":\"ok\"}");
     }
@@ -76,9 +76,9 @@ public class AliceController {
 
         log.info("✅ Запрос на закрытие ворот с колонки: {}", request.getEntityId());
         if (TuyaAdapter.closeGate()) {
-            aliceService.sendToSpecificAlice(request.getEntityId(), "Ворота закрылись");
+            sendToAlice(request.getEntityId(), "Ворота закрылись");
         } else {
-            aliceService.sendToSpecificAlice(request.getEntityId(), "Возникли сложности, ворота не закрылись");
+            sendToAlice(request.getEntityId(), "Возникли сложности, ворота не закрылись");
         }
         return ResponseEntity.ok("{\"status\":\"ok\"}");
     }
@@ -94,11 +94,18 @@ public class AliceController {
 
         log.info("✅ Запрос на остановку ворот с колонки: {}", request.getEntityId());
         if (TuyaAdapter.stopGate()) {
-            aliceService.sendToSpecificAlice(request.getEntityId(), "Ворота остановлены");
+            sendToAlice(request.getEntityId(), "Ворота остановлены");
         } else {
-            aliceService.sendToSpecificAlice(request.getEntityId(), "Возникли сложности, ворота не остановились");
+            sendToAlice(request.getEntityId(), "Возникли сложности, ворота не остановились");
         }
         return ResponseEntity.ok("{\"status\":\"ok\"}");
+    }
+
+    // Отправка сообщения на Алису, если entityId не равен "widget"
+    private void sendToAlice(String entityId, String message) {
+        if (!"widget".equals(entityId)) {
+            aliceService.sendToSpecificAlice(entityId, message);
+        }
     }
 
     // Вспомогательный метод для логирования IP
