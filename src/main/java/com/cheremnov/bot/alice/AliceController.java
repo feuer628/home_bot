@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.util.function.BooleanSupplier;
+
 @RestController
 @Slf4j
 public class AliceController {
@@ -32,73 +34,60 @@ public class AliceController {
     @PostMapping("/open-door")
     public ResponseEntity<String> openDoor(@RequestBody OpenDoorRequest request,
                                            @RequestHeader(value = "X-API-Token", required = false) String token) {
-        if (!validateToken(token)) {
-            log.warn("❌ Неавторизованная попытка открытия калитки. IP: {}, Token: {}",
-                    getRequestIp(), token != null ? "***" + token.substring(token.length() - 4) : "отсутствует");
-            return ResponseEntity.status(401).body("{\"error\":\"Unauthorized\"}");
-        }
-
-        log.info("✅ Запрос на открытие калитки с колонки: {}", request.getEntityId());
-        if (TuyaAdapter.openDoor()) {
-            sendToAlice(request.getEntityId(), "Калитка открылась");
-        } else {
-            sendToAlice(request.getEntityId(), "Возникли сложности, калитка не открылась");
-        }
-        return ResponseEntity.ok("{\"status\":\"ok\"}");
+        return handle(request, token, "open-door", "открытие калитки",
+                TuyaAdapter::openDoor, "Калитка открылась", "Возникли сложности, калитка не открылась");
     }
 
     @PostMapping("/open-gate")
     public ResponseEntity<String> openGate(@RequestBody OpenDoorRequest request,
                                            @RequestHeader(value = "X-API-Token", required = false) String token) {
-        if (!validateToken(token)) {
-            log.warn("❌ Неавторизованная попытка открытия ворот. IP: {}, Token: {}",
-                    getRequestIp(), token != null ? "***" + token.substring(token.length() - 4) : "отсутствует");
-            return ResponseEntity.status(401).body("{\"error\":\"Unauthorized\"}");
-        }
-
-        log.info("✅ Запрос на открытие ворот с колонки: {}", request.getEntityId());
-        if (TuyaAdapter.openGate()) {
-            sendToAlice(request.getEntityId(), "Ворота открылись");
-        } else {
-            sendToAlice(request.getEntityId(), "Возникли сложности, ворота не открылись");
-        }
-        return ResponseEntity.ok("{\"status\":\"ok\"}");
+        return handle(request, token, "open-gate", "открытие ворот",
+                TuyaAdapter::openGate, "Ворота открылись", "Возникли сложности, ворота не открылись");
     }
 
     @PostMapping("/close-gate")
     public ResponseEntity<String> closeGate(@RequestBody OpenDoorRequest request,
                                             @RequestHeader(value = "X-API-Token", required = false) String token) {
-        if (!validateToken(token)) {
-            log.warn("❌ Неавторизованная попытка закрытия ворот. IP: {}, Token: {}",
-                    getRequestIp(), token != null ? "***" + token.substring(token.length() - 4) : "отсутствует");
-            return ResponseEntity.status(401).body("{\"error\":\"Unauthorized\"}");
-        }
-
-        log.info("✅ Запрос на закрытие ворот с колонки: {}", request.getEntityId());
-        if (TuyaAdapter.closeGate()) {
-            sendToAlice(request.getEntityId(), "Ворота закрылись");
-        } else {
-            sendToAlice(request.getEntityId(), "Возникли сложности, ворота не закрылись");
-        }
-        return ResponseEntity.ok("{\"status\":\"ok\"}");
+        return handle(request, token, "close-gate", "закрытие ворот",
+                TuyaAdapter::closeGate, "Ворота закрылись", "Возникли сложности, ворота не закрылись");
     }
 
     @PostMapping("/stop-gate")
     public ResponseEntity<String> stopGate(@RequestBody OpenDoorRequest request,
                                            @RequestHeader(value = "X-API-Token", required = false) String token) {
+        return handle(request, token, "stop-gate", "остановка ворот",
+                TuyaAdapter::stopGate, "Ворота остановлены", "Возникли сложности, ворота не остановились");
+    }
+
+    private ResponseEntity<String> handle(OpenDoorRequest request,
+                                          String token,
+                                          String action,
+                                          String actionRu,
+                                          BooleanSupplier supplier,
+                                          String okMessage,
+                                          String failMessage) {
         if (!validateToken(token)) {
-            log.warn("❌ Неавторизованная попытка остановки ворот. IP: {}, Token: {}",
-                    getRequestIp(), token != null ? "***" + token.substring(token.length() - 4) : "отсутствует");
-            return ResponseEntity.status(401).body("{\"error\":\"Unauthorized\"}");
+            log.warn("❌ Неавторизованная попытка {}. IP: {}, Token: {}",
+                    actionRu, getRequestIp(),
+                    token != null ? "***" + token.substring(token.length() - 4) : "отсутствует");
+            return ResponseEntity.status(401)
+                    .body("{\"status\":\"error\",\"action\":\"" + action + "\",\"message\":\"Unauthorized\"}");
         }
 
-        log.info("✅ Запрос на остановку ворот с колонки: {}", request.getEntityId());
-        if (TuyaAdapter.stopGate()) {
-            sendToAlice(request.getEntityId(), "Ворота остановлены");
-        } else {
-            sendToAlice(request.getEntityId(), "Возникли сложности, ворота не остановились");
+        log.info("✅ Запрос на {} с колонки: {}", actionRu, request.getEntityId());
+        try {
+            boolean success = supplier.getAsBoolean();
+            sendToAlice(request.getEntityId(), success ? okMessage : failMessage);
+            if (success) {
+                return ResponseEntity.ok("{\"status\":\"ok\",\"action\":\"" + action + "\"}");
+            }
+            return ResponseEntity.status(502)
+                    .body("{\"status\":\"error\",\"action\":\"" + action + "\",\"message\":\"" + failMessage + "\"}");
+        } catch (Exception e) {
+            log.error("💥 Ошибка при {}: {}", actionRu, e.getMessage(), e);
+            return ResponseEntity.status(500)
+                    .body("{\"status\":\"error\",\"action\":\"" + action + "\",\"message\":\"Internal error\"}");
         }
-        return ResponseEntity.ok("{\"status\":\"ok\"}");
     }
 
     // Отправка сообщения на Алису, если entityId не равен "widget"
