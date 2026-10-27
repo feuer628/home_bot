@@ -1,0 +1,14 @@
+{
+  "name": "tg-bot-relay",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cloudflare Worker - relay to Telegram Bot API",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "secret": "wrangler secret put RELAY_SECRET",
+    "dev": "wrangler dev"
+  },
+  "devDependencies": {
+    "wrangler": "^3.90.0"
+  }
+}
