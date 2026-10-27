@@ -1,14 +1,13 @@
 package com.cheremnov.bot.command.start;
 
-import com.cheremnov.bot.Bot;
-import com.cheremnov.bot.command.AbstractCommandHandler;
+import com.cheremnov.bot.messenger.Messenger;
+import com.cheremnov.bot.messenger.MsgMessage;
+import com.cheremnov.bot.messenger.MsgUser;
 import com.cheremnov.bot.command.help.HelpCommand;
 import com.cheremnov.bot.db.subscibers.Subscriber;
 import com.cheremnov.bot.db.subscibers.SubscriberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.User;
 
 import java.text.MessageFormat;
 
@@ -24,13 +23,13 @@ public class StartCommand extends HelpCommand {
     }
 
     @Override
-    public void handleCommand(Message message, Bot bot) {
+    public void handleCommand(MsgMessage message, Messenger messenger) {
         Subscriber subscriber = new Subscriber();
-        User from = message.getFrom();
+        MsgUser from = message.getFrom();
         subscriber.setId(from.getId());
-        subscriber.setName(String.join(" ", from.getFirstName(), from.getLastName()));
+        subscriber.setName(from.getFullName());
         subscriber.setChatId(message.getChatId());
         subscriberRepository.save(subscriber);
-        bot.sendText(message.getChatId(), MessageFormat.format("Привет, {0}!\n\n", subscriber.getName()) + HELP_TEXT);
+        messenger.sendText(message.getChatId(), MessageFormat.format("Привет, {0}!\n\n", subscriber.getName()) + HELP_TEXT);
     }
 }

@@ -1,10 +1,10 @@
 package com.cheremnov.bot.command.chess;
 
-import com.cheremnov.bot.Bot;
+import com.cheremnov.bot.messenger.Messenger;
+import com.cheremnov.bot.messenger.MsgCallback;
 import com.cheremnov.bot.command.AbstractCallbackHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public class NextGroupTourCallback extends AbstractCallbackHandler {
     }
 
     @Override
-    public void handleCallback(CallbackQuery callback, Bot bot) {
+    public void handleCallback(MsgCallback callback, Messenger messenger) {
         String[] params = getCallbacksInfo(callback);
         long tourId = Long.parseLong(params[0]);
         String pageNumber = params[1];
@@ -32,12 +32,12 @@ public class NextGroupTourCallback extends AbstractCallbackHandler {
             s = s + "последний ";
         }
         String finalS = s;
-        List<Long> subscriberChatIds = groupTour.getSubscriberChatIds();
+        List<String> subscriberChatIds = groupTour.getSubscriberChatIds();
         if (subscriberChatIds != null) {
-            subscriberChatIds.forEach(chatId -> bot.sendText(chatId, finalS + currentTour + " тур"));
+            subscriberChatIds.forEach(chatId -> messenger.sendText(chatId, finalS + currentTour + " тур"));
         }
         groupRepository.save(groupTour);
         callback.setData(callbackPrefix() + ":" + pageNumber);
-        getBean(GroupListCallback.class).handleCallback(callback, bot);
+        getBean(GroupListCallback.class).handleCallback(callback, messenger);
     }
 }

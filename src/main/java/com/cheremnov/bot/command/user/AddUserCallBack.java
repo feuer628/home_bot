@@ -1,6 +1,8 @@
 package com.cheremnov.bot.command.user;
 
-import com.cheremnov.bot.Bot;
+import com.cheremnov.bot.messenger.KeyButton;
+import com.cheremnov.bot.messenger.Messenger;
+import com.cheremnov.bot.messenger.MsgCallback;
 import com.cheremnov.bot.command.ICallbackHandler;
 import com.cheremnov.bot.security.UserChecker;
 import com.cheremnov.bot.db.subscibers.Subscriber;
@@ -10,8 +12,6 @@ import com.cheremnov.bot.db.trusted_user.TrustedUserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 @Component
 @Slf4j
@@ -32,14 +32,14 @@ public class AddUserCallBack implements ICallbackHandler {
     }
 
     @Override
-    public InlineKeyboardButton getInlineButton() {
-        return InlineKeyboardButton.builder().text("Добавить").callbackData(callbackPrefix()).build();
+    public KeyButton getInlineButton() {
+        return KeyButton.callbackButton("Добавить", callbackPrefix());
     }
 
     @Override
-    public void handle(CallbackQuery callback, Bot bot) {
-        bot.deleteInlineMarkup(callback.getMessage());
-        Subscriber subscriber = subscriberRepository.findById(Long.valueOf(getCallbackInfo(callback))).orElseThrow();
+    public void handle(MsgCallback callback, Messenger messenger) {
+        messenger.deleteInlineMarkup(callback.getMessage().getChatId(), callback.getMessage().getMessageId());
+        Subscriber subscriber = subscriberRepository.findById(getCallbackInfo(callback)).orElseThrow();
 
         TrustedUser trustedUser = new TrustedUser();
         trustedUser.setId(subscriber.getId());
@@ -52,7 +52,7 @@ public class AddUserCallBack implements ICallbackHandler {
         userChecker.reset();
 
 
-        bot.sendText(callback.getMessage().getChatId(), "Пользователь добавлен в список доверенных");
-        bot.answerCallback(callback);
+        messenger.sendText(callback.getMessage().getChatId(), "Пользователь добавлен в список доверенных");
+        messenger.answerCallback(callback);
     }
 }

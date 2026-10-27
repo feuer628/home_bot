@@ -1,10 +1,10 @@
 package com.cheremnov.bot.command;
 
-import com.cheremnov.bot.Bot;
+import com.cheremnov.bot.messenger.Messenger;
+import com.cheremnov.bot.messenger.MsgMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.Message;
 
 @Component
 public abstract class AbstractMessageHandler {
@@ -16,11 +16,11 @@ public abstract class AbstractMessageHandler {
         return context.getBean(requiredType);
     }
 
-    public final void handle(Message message, Bot bot) {
-        if (handleMessage(message, bot)){
-            bot.deleteMessageHandler(message.getChatId());
+    public final void handle(MsgMessage message, Messenger messenger) {
+        if (handleMessage(message, messenger)) {
+            messenger.deleteMessageHandler(message.getChatId());
         }
     }
 
-    public abstract boolean handleMessage(Message message, Bot bot);
+    public abstract boolean handleMessage(MsgMessage message, Messenger messenger);
 }

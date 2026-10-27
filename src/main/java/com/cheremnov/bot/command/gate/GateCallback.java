@@ -1,12 +1,12 @@
 package com.cheremnov.bot.command.gate;
 
-import com.cheremnov.bot.Bot;
+import com.cheremnov.bot.messenger.KeyButton;
+import com.cheremnov.bot.messenger.Keyboard;
+import com.cheremnov.bot.messenger.Messenger;
+import com.cheremnov.bot.messenger.MsgCallback;
 import com.cheremnov.bot.command.door.TuyaAdapter;
 import com.cheremnov.bot.command.ICallbackHandler;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,30 +23,20 @@ public class GateCallback implements ICallbackHandler {
         return "gate";
     }
 
-    public InlineKeyboardMarkup getGateKeyboard() {
-        InlineKeyboardButton open = new InlineKeyboardButton("Открыть");
-        open.setCallbackData(callbackPrefix() + ":" + ACTION_OPEN);
-        InlineKeyboardButton stop = new InlineKeyboardButton("Стоп");
-        stop.setCallbackData(callbackPrefix() + ":" + ACTION_STOP);
-        InlineKeyboardButton close = new InlineKeyboardButton("Закрыть");
-        close.setCallbackData(callbackPrefix() + ":" + ACTION_CLOSE);
-
-        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
-        markup.setKeyboard(Collections.singletonList(Arrays.asList(open, stop, close)));
-        return markup;
+    public Keyboard getGateKeyboard() {
+        KeyButton open = KeyButton.callbackButton("Открыть", callbackPrefix() + ":" + ACTION_OPEN);
+        KeyButton stop = KeyButton.callbackButton("Стоп", callbackPrefix() + ":" + ACTION_STOP);
+        KeyButton close = KeyButton.callbackButton("Закрыть", callbackPrefix() + ":" + ACTION_CLOSE);
+        return Keyboard.row(Arrays.asList(open, stop, close));
     }
 
-    public InlineKeyboardMarkup getStopOnlyKeyboard() {
-        InlineKeyboardButton stop = new InlineKeyboardButton("Стоп");
-        stop.setCallbackData(callbackPrefix() + ":" + ACTION_STOP);
-
-        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
-        markup.setKeyboard(Collections.singletonList(Collections.singletonList(stop)));
-        return markup;
+    public Keyboard getStopOnlyKeyboard() {
+        KeyButton stop = KeyButton.callbackButton("Стоп", callbackPrefix() + ":" + ACTION_STOP);
+        return Keyboard.row(Collections.singletonList(stop));
     }
 
     @Override
-    public void handle(CallbackQuery callback, Bot bot) {
+    public void handle(MsgCallback callback, Messenger messenger) {
         String action = getCallbackInfo(callback);
         try {
             boolean success;
@@ -64,17 +54,17 @@ public class GateCallback implements ICallbackHandler {
                     success = false;
             }
             if (!success) {
-                bot.sendText(callback.getMessage().getChatId(), "Ошибка");
+                messenger.sendText(callback.getMessage().getChatId(), "Ошибка");
             }
         } catch (Exception e) {
-            bot.sendText(callback.getMessage().getChatId(), "Ошибка: " + e.getMessage());
+            messenger.sendText(callback.getMessage().getChatId(), "Ошибка: " + e.getMessage());
         }
 
-        bot.answerCallback(callback);
+        messenger.answerCallback(callback);
         if (ACTION_STOP.equals(action)) {
-            bot.deleteInlineMarkup(callback.getMessage());
+            messenger.deleteInlineMarkup(callback.getMessage());
         } else {
-            bot.setInlineMarkup(callback.getMessage(), getStopOnlyKeyboard());
+            messenger.setInlineMarkup(callback.getMessage(), getStopOnlyKeyboard());
         }
     }
 }

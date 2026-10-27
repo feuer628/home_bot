@@ -1,9 +1,9 @@
 package com.cheremnov.bot.command.chess;
 
-import com.cheremnov.bot.Bot;
+import com.cheremnov.bot.messenger.Messenger;
+import com.cheremnov.bot.messenger.MsgMessage;
 import com.cheremnov.bot.command.AbstractCommandHandler;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.Message;
 
 @Component
 public class AddGroupTourCommand extends AbstractCommandHandler {
@@ -19,9 +19,9 @@ public class AddGroupTourCommand extends AbstractCommandHandler {
     }
 
     @Override
-    public void handleCommand(Message message, Bot bot) {
-        bot.sendText(message.getChatId(), "Пришлите название группы турнира и количество туров в формате <Название группы тура> - <кол-во туров> (допускается указание нескольких турниров с новой строки).\n" +
+    public void handleCommand(MsgMessage message, Messenger messenger) {
+        messenger.sendText(message.getChatId(), "Пришлите название группы турнира и количество туров в формате <Название группы тура> - <кол-во туров> (допускается указание нескольких турниров с новой строки).\n" +
                 "Например:\n M11 - 9");
-        bot.setMessageHandler(message.getChatId(), getBean(TournamentMessageHandler.class));
+        messenger.setMessageHandler(message.getChatId(), getBean(TournamentMessageHandler.class));
     }
 }

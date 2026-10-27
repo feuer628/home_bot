@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class PaginationInfoModel {
-    private Long entityId;
+    private String entityId;
     private int pNum;
 }

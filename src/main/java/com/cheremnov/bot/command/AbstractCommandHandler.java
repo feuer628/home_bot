@@ -1,11 +1,11 @@
 package com.cheremnov.bot.command;
 
-import com.cheremnov.bot.Bot;
+import com.cheremnov.bot.messenger.Messenger;
+import com.cheremnov.bot.messenger.MsgMessage;
 import com.cheremnov.bot.security.UserChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.Message;
 
 @Component
 public abstract class AbstractCommandHandler {
@@ -32,19 +32,19 @@ public abstract class AbstractCommandHandler {
         return context.getBean(requiredType);
     }
 
-    public final void handle(Message message, Bot bot) {
-        if (!isPublicCommand()&& !userChecker.isUserTrusted(message.getFrom().getId())) {
-            bot.sendText(message.getChatId(), "Вы не имеете право на выполнение этой команды");
+    public final void handle(MsgMessage message, Messenger messenger) {
+        if (!isPublicCommand() && !userChecker.isUserTrusted(message.getFrom().getId())) {
+            messenger.sendText(message.getChatId(), "Вы не имеете право на выполнение этой команды");
             return;
         }
         // если пришла команда, то удаляем обработчики старых сообщений
-        bot.deleteMessageHandler(message.getChatId());
-        handleCommand(message, bot);
+        messenger.deleteMessageHandler(message.getChatId());
+        handleCommand(message, messenger);
     }
 
-    public abstract void handleCommand(Message message, Bot bot);
+    public abstract void handleCommand(MsgMessage message, Messenger messenger);
 
-    protected boolean hasText(Message message) {
-        return message.hasText() && !message.getText().trim().equals("/"+ getCommandName());
+    protected boolean hasText(MsgMessage message) {
+        return message.hasText() && !message.getText().trim().equals("/" + getCommandName());
     }
 }

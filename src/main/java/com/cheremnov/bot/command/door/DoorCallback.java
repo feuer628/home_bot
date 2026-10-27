@@ -1,9 +1,9 @@
 package com.cheremnov.bot.command.door;
 
-import com.cheremnov.bot.Bot;
+import com.cheremnov.bot.messenger.Messenger;
+import com.cheremnov.bot.messenger.MsgCallback;
 import com.cheremnov.bot.command.ICallbackHandler;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
 @Component
 public class DoorCallback implements ICallbackHandler {
@@ -14,16 +14,16 @@ public class DoorCallback implements ICallbackHandler {
     }
 
     @Override
-    public void handle(CallbackQuery callback, Bot bot) {
+    public void handle(MsgCallback callback, Messenger messenger) {
         try {
             if (!TuyaAdapter.openDoor()) {
-                bot.sendText(callback.getMessage().getChatId(), "Ошибка");
+                messenger.sendText(callback.getMessage().getChatId(), "Ошибка");
             }
         } catch (Exception e) {
-            bot.sendText(callback.getMessage().getChatId(), "Ошибка: " + e.getMessage());
+            messenger.sendText(callback.getMessage().getChatId(), "Ошибка: " + e.getMessage());
         }
 
-        bot.answerCallback(callback);
-        bot.deleteInlineMarkup(callback.getMessage());
+        messenger.answerCallback(callback);
+        messenger.deleteInlineMarkup(callback.getMessage().getChatId(), callback.getMessage().getMessageId());
     }
 }

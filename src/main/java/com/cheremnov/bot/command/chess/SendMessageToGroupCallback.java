@@ -1,10 +1,10 @@
 package com.cheremnov.bot.command.chess;
 
-import com.cheremnov.bot.Bot;
+import com.cheremnov.bot.messenger.Messenger;
+import com.cheremnov.bot.messenger.MsgCallback;
 import com.cheremnov.bot.command.AbstractCallbackHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
 @Component
 public class SendMessageToGroupCallback extends AbstractCallbackHandler {
@@ -18,12 +18,12 @@ public class SendMessageToGroupCallback extends AbstractCallbackHandler {
     }
 
     @Override
-    public void handleCallback(CallbackQuery callback, Bot bot) {
+    public void handleCallback(MsgCallback callback, Messenger messenger) {
         GroupTour groupTour = groupRepository.findById(Long.valueOf(getCallbackInfo(callback))).orElseThrow();
-        bot.sendText(callback.getMessage().getChatId(), "Отправьте в этот чат сообщение, которое хотите отправить в группу " + groupTour.getName());
+        messenger.sendText(callback.getMessage().getChatId(), "Отправьте в этот чат сообщение, которое хотите отправить в группу " + groupTour.getName());
         SendMsgMessageHandler messageHandler = getBean(SendMsgMessageHandler.class);
         messageHandler.setSubscriberChatIds(groupTour.getSubscriberChatIds());
-        bot.setMessageHandler(callback.getMessage().getChatId(), messageHandler);
-        bot.deleteInlineMarkup(callback.getMessage());
+        messenger.setMessageHandler(callback.getMessage().getChatId(), messageHandler);
+        messenger.deleteInlineMarkup(callback.getMessage());
     }
 }

@@ -1,16 +1,16 @@
 package com.cheremnov.bot.command.water;
 
-import com.cheremnov.bot.Bot;
+import com.cheremnov.bot.messenger.KeyButton;
+import com.cheremnov.bot.messenger.Messenger;
+import com.cheremnov.bot.messenger.MsgCallback;
 import com.cheremnov.bot.command.ICallbackHandler;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 @Component
-public class WaterOffCallback  implements ICallbackHandler {
+public class WaterOffCallback implements ICallbackHandler {
 
-    public InlineKeyboardButton getInlineButton() {
-        return InlineKeyboardButton.builder().text("Закрыть").callbackData(callbackPrefix()).build();
+    public KeyButton getInlineButton() {
+        return KeyButton.callbackButton("Закрыть", callbackPrefix());
     }
 
     @Override
@@ -19,8 +19,8 @@ public class WaterOffCallback  implements ICallbackHandler {
     }
 
     @Override
-    public void handle(CallbackQuery callback, Bot bot) {
-        bot.sendText(callback.getMessage().getChatId(), " Отправлен запрос на вЫключение воды \uD83D\uDEB0");
-        bot.answerCallback(callback);
+    public void handle(MsgCallback callback, Messenger messenger) {
+        messenger.sendText(callback.getMessage().getChatId(), " Отправлен запрос на вЫключение воды \uD83D\uDEB0");
+        messenger.answerCallback(callback);
     }
 }

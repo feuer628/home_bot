@@ -1,10 +1,10 @@
 package com.cheremnov.bot.command.chess;
 
-import com.cheremnov.bot.Bot;
+import com.cheremnov.bot.messenger.Messenger;
+import com.cheremnov.bot.messenger.MsgMessage;
 import com.cheremnov.bot.command.AbstractPagebleCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.Message;
 
 @Component
 public class GroupListCommand extends AbstractPagebleCommand<GroupTour> {
@@ -30,8 +30,8 @@ public class GroupListCommand extends AbstractPagebleCommand<GroupTour> {
     }
 
     @Override
-    public void handleCommand(Message message, Bot bot) {
-        bot.sendText(message.getChatId(), getCommandDescription(), getInlineKeyboard(0));
+    public void handleCommand(MsgMessage message, Messenger messenger) {
+        messenger.sendText(message.getChatId(), getCommandDescription(), getInlineKeyboard(0));
     }
 
 }

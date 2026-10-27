@@ -1,13 +1,12 @@
 package com.cheremnov.bot.command.water;
 
-import com.cheremnov.bot.Bot;
+import com.cheremnov.bot.messenger.Keyboard;
+import com.cheremnov.bot.messenger.Messenger;
+import com.cheremnov.bot.messenger.MsgMessage;
 import com.cheremnov.bot.command.AbstractCommandHandler;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 @Component
 public class WaterCommand extends AbstractCommandHandler {
@@ -23,15 +22,14 @@ public class WaterCommand extends AbstractCommandHandler {
         return "Управление водой";
     }
 
-    private InlineKeyboardMarkup getInlineBottomOnOff() {
-        InlineKeyboardMarkup markupKeyboard = new InlineKeyboardMarkup();
-        markupKeyboard.setKeyboard(Collections.singletonList(
-                Arrays.asList(getBean(WaterOffCallback.class).getInlineButton(), getBean(WaterOnCallback.class).getInlineButton())));
-        return markupKeyboard;
+    private Keyboard getInlineBottomOnOff() {
+        return Keyboard.row(Arrays.asList(
+                getBean(WaterOffCallback.class).getInlineButton(),
+                getBean(WaterOnCallback.class).getInlineButton()));
     }
 
     @Override
-    public void handleCommand(Message message1, Bot bot) {
-        bot.sendText(message1.getChatId(), "Что нужно сделать с водой?", getInlineBottomOnOff());
+    public void handleCommand(MsgMessage message1, Messenger messenger) {
+        messenger.sendText(message1.getChatId(), "Что нужно сделать с водой?", getInlineBottomOnOff());
     }
 }

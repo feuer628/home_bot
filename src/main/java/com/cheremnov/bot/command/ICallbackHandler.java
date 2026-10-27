@@ -1,9 +1,9 @@
 package com.cheremnov.bot.command;
 
-import com.cheremnov.bot.Bot;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import com.cheremnov.bot.messenger.KeyButton;
+import com.cheremnov.bot.messenger.Keyboard;
+import com.cheremnov.bot.messenger.Messenger;
+import com.cheremnov.bot.messenger.MsgCallback;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,49 +16,42 @@ public interface ICallbackHandler {
         return "Нет текста для кнопки";
     }
 
-    default InlineKeyboardMarkup getSingleButton(String buttonText, String callbackData) {
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        inlineKeyboardMarkup.setKeyboard(Collections.singletonList(Collections.singletonList(getInlineButton(buttonText, callbackData))));
-        return inlineKeyboardMarkup;
+    default Keyboard getSingleButton(String buttonText, String callbackData) {
+        return Keyboard.single(getInlineButton(buttonText, callbackData));
     }
 
-    default InlineKeyboardMarkup getSingleButtonWithCancel(String buttonText, String callbackData) {
-        InlineKeyboardButton cancel =  new InlineKeyboardButton("Отмена");
-        cancel.setCallbackData("cancel");
-
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        inlineKeyboardMarkup.setKeyboard(Collections.singletonList(Arrays.asList(getInlineButton(buttonText, callbackData), cancel)));
-        return inlineKeyboardMarkup;
+    default Keyboard getSingleButtonWithCancel(String buttonText, String callbackData) {
+        KeyButton cancel = KeyButton.callbackButton("Отмена", "cancel");
+        return Keyboard.row(Arrays.asList(getInlineButton(buttonText, callbackData), cancel));
     }
 
-    default InlineKeyboardButton getInlineButton() {
-        InlineKeyboardButton button = new InlineKeyboardButton(getInlineButtonText());
-        button.setCallbackData(callbackPrefix());
-        return button;
+    default KeyButton getInlineButton() {
+        return KeyButton.callbackButton(getInlineButtonText(), callbackPrefix());
     }
 
-    default InlineKeyboardButton getInlineButton(String callbackData) {
-        InlineKeyboardButton button = getInlineButton();
+    default KeyButton getInlineButton(String callbackData) {
+        KeyButton button = getInlineButton();
         button.setCallbackData(button.getCallbackData() + ":" + callbackData);
         return button;
     }
 
-    default InlineKeyboardButton getInlineButton(String buttonText, String... callbackData) {
-        InlineKeyboardButton button =  new InlineKeyboardButton(buttonText);
-        button.setCallbackData(callbackPrefix() + ":" + String.join(";", callbackData));
-        return button;
+    default KeyButton getInlineButton(String buttonText, String... callbackData) {
+        return KeyButton.callbackButton(buttonText, callbackPrefix() + ":" + String.join(";", callbackData));
     }
 
-    default String getCallbackInfo(CallbackQuery callback) {
+    default String getCallbackInfo(MsgCallback callback) {
         String data = callback.getData();
+        if (data == null) {
+            return null;
+        }
         int indexOf = data.indexOf(':');
         return indexOf >= 0 ? data.substring(indexOf + 1) : null;
     }
 
-    default String[] getCallbacksInfo(CallbackQuery callback) {
+    default String[] getCallbacksInfo(MsgCallback callback) {
         String info = getCallbackInfo(callback);
         return info == null ? new String[]{} : info.split(";");
     }
 
-    void handle(CallbackQuery callback, Bot bot);
+    void handle(MsgCallback callback, Messenger messenger);
 }

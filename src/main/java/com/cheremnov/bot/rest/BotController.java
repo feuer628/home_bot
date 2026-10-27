@@ -1,7 +1,7 @@
 package com.cheremnov.bot.rest;
 
-import com.cheremnov.bot.Bot;
 import com.cheremnov.bot.db.subscibers.SubscriberRepository;
+import com.cheremnov.bot.messenger.Messenger;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +15,7 @@ public class BotController {
     SubscriberRepository subscriberRepository;
 
     @Autowired
-    private Bot bot;
+    private Messenger messenger;
 
     @GetMapping("/send-message")
     public void sendMessage() {
@@ -23,7 +23,7 @@ public class BotController {
             if (subscriber.getChatId() == null) {
                 return;
             }
-            bot.sendText(subscriber.getChatId(), "Ты есть - " + subscriber.getName());
+            messenger.sendText(subscriber.getChatId(), "Ты есть - " + subscriber.getName());
         });
     }
 }

@@ -1,10 +1,10 @@
 package com.cheremnov.bot.command;
 
-import com.cheremnov.bot.Bot;
+import com.cheremnov.bot.messenger.Messenger;
+import com.cheremnov.bot.messenger.MsgCallback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
 @Component
 public class BackToListCallback implements ICallbackHandler {
@@ -18,7 +18,7 @@ public class BackToListCallback implements ICallbackHandler {
     }
 
     @Override
-    public void handle(CallbackQuery callback, Bot bot) {
+    public void handle(MsgCallback callback, Messenger messenger) {
         String[] params = getCallbacksInfo(callback);
         AbstractPagebleCommand<PageableModel> userListCommand;
         try {
@@ -26,7 +26,8 @@ public class BackToListCallback implements ICallbackHandler {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        bot.editMessageText(callback.getMessage().getChatId(), callback.getMessage().getMessageId(), userListCommand.getCommandDescription(), userListCommand.getInlineKeyboard(Integer.parseInt(params[1])));
-        bot.answerCallback(callback);
+        messenger.editMessageText(callback.getMessage().getChatId(), callback.getMessage().getMessageId(),
+                userListCommand.getCommandDescription(), userListCommand.getInlineKeyboard(Integer.parseInt(params[1])));
+        messenger.answerCallback(callback);
     }
 }

@@ -1,18 +1,14 @@
 package com.cheremnov.bot.command;
 
-import com.cheremnov.bot.Bot;
+import com.cheremnov.bot.messenger.Messenger;
+import com.cheremnov.bot.messenger.MsgCallback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
 /**
- * Абстрактный класс-обработчик для обработки callback-запросов в Telegram-боте.
- * Предоставляет общую логику и интерфейс для реализации конкретных обработчиков,
- * связанных с пользовательскими действиями, например, нажатием на inline-кнопки.
- *
- * <p>Класс предназначен для упрощения создания новых обработчиков callback-запросов,
- * обеспечивая единую точку входа и возможность расширения функциональности через переопределение методов.</p>
+ * Абстрактный класс-обработчик для обработки callback-запросов (нажатий на inline-кнопки).
+ * Предоставляет общую логику и интерфейс для реализации конкретных обработчиков.
  *
  * @author Cheremnov
  * @version 1.0
@@ -22,7 +18,6 @@ public abstract class AbstractCallbackHandler implements ICallbackHandler {
 
     /**
      * Контекст Spring-приложения, используемый для получения бинов.
-     * Внедряется автоматически с помощью аннотации {@link Autowired}.
      */
     @Autowired
     private ApplicationContext context;
@@ -38,34 +33,21 @@ public abstract class AbstractCallbackHandler implements ICallbackHandler {
         return context.getBean(requiredType);
     }
 
-    /**
-     * Возвращает префикс callback-данных, который используется для определения,
-     * какой обработчик должен обработать данный callback-запрос.
-     *
-     * @return строковый префикс callback-данных
-     */
     @Override
     public abstract String callbackPrefix();
 
     /**
      * Основной метод для обработки callback-запроса.
-     * Вызывает {@link #handleCallback(CallbackQuery, Bot)} и отправляет ответ на callback.
-     *
-     * @param callback объект CallbackQuery, полученный от Telegram API
-     * @param bot      экземпляр бота, используемый для взаимодействия с Telegram
+     * Вызывает {@link #handleCallback(MsgCallback, Messenger)} и отправляет ответ на callback.
      */
     @Override
-    public final void handle(CallbackQuery callback, Bot bot) {
-        handleCallback(callback, bot);
-        bot.answerCallback(callback);
+    public final void handle(MsgCallback callback, Messenger messenger) {
+        handleCallback(callback, messenger);
+        messenger.answerCallback(callback);
     }
 
     /**
-     * Абстрактный метод, который должен быть реализован в подклассах.
-     * Содержит конкретную логику обработки callback-запроса.
-     *
-     * @param callback объект CallbackQuery, полученный от Telegram API
-     * @param bot      экземпляр бота, используемый для взаимодействия с Telegram
+     * Абстрактный метод с конкретной логикой обработки callback-запроса.
      */
-    public abstract void handleCallback(CallbackQuery callback, Bot bot);
+    public abstract void handleCallback(MsgCallback callback, Messenger messenger);
 }

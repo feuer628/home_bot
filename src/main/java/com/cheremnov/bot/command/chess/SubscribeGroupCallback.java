@@ -1,10 +1,10 @@
 package com.cheremnov.bot.command.chess;
 
-import com.cheremnov.bot.Bot;
+import com.cheremnov.bot.messenger.Messenger;
+import com.cheremnov.bot.messenger.MsgCallback;
 import com.cheremnov.bot.command.AbstractCallbackHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +21,9 @@ public class SubscribeGroupCallback extends AbstractCallbackHandler {
     }
 
     @Override
-    public void handleCallback(CallbackQuery callback, Bot bot) {
+    public void handleCallback(MsgCallback callback, Messenger messenger) {
         GroupTour groupTour = groupRepository.findById(Long.valueOf(getCallbackInfo(callback))).orElseThrow();
-        List<Long> subscribers = groupTour.getSubscriberChatIds();
+        List<String> subscribers = groupTour.getSubscriberChatIds();
         if (subscribers == null) {
             subscribers = new ArrayList<>();
         }
@@ -37,7 +37,7 @@ public class SubscribeGroupCallback extends AbstractCallbackHandler {
         }
         groupTour.setSubscriberChatIds(subscribers);
         groupRepository.save(groupTour);
-        bot.sendText(callback.getMessage().getChatId(), sendText);
-        bot.deleteInlineMarkup(callback.getMessage());
+        messenger.sendText(callback.getMessage().getChatId(), sendText);
+        messenger.deleteInlineMarkup(callback.getMessage());
     }
 }

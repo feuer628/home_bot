@@ -1,8 +1,8 @@
 package com.cheremnov.bot.command;
 
-import com.cheremnov.bot.Bot;
+import com.cheremnov.bot.messenger.Messenger;
+import com.cheremnov.bot.messenger.MsgCallback;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
 @Component
 public class CancelCallback implements ICallbackHandler {
@@ -13,8 +13,8 @@ public class CancelCallback implements ICallbackHandler {
     }
 
     @Override
-    public void handle(CallbackQuery callback, Bot bot) {
-        bot.deleteInlineMarkup(callback.getMessage());
-        bot.sendText(callback.getMessage().getChatId(), "Действие отменено");
+    public void handle(MsgCallback callback, Messenger messenger) {
+        messenger.deleteInlineMarkup(callback.getMessage().getChatId(), callback.getMessage().getMessageId());
+        messenger.sendText(callback.getMessage().getChatId(), "Действие отменено");
     }
 }

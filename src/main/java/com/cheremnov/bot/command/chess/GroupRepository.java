@@ -4,5 +4,5 @@ import com.cheremnov.bot.db.PageableRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface GroupRepository extends PageableRepository<GroupTour> {
+public interface GroupRepository extends PageableRepository<GroupTour, Long> {
 }

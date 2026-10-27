@@ -1,11 +1,11 @@
 package com.cheremnov.bot.command.chess;
 
-import com.cheremnov.bot.Bot;
+import com.cheremnov.bot.messenger.Messenger;
+import com.cheremnov.bot.messenger.MsgMessage;
 import com.cheremnov.bot.command.AbstractMessageHandler;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ public class TournamentMessageHandler extends AbstractMessageHandler {
     private GroupRepository groupRepository;
 
     @Override
-    public boolean handleMessage(Message message, Bot bot) {
+    public boolean handleMessage(MsgMessage message, Messenger messenger) {
 
         List<String> tours = List.of(message.getText().split("\n"));
         AtomicBoolean isError = new AtomicBoolean(false);
@@ -36,7 +36,7 @@ public class TournamentMessageHandler extends AbstractMessageHandler {
             groupTours.add(groupTour);
         });
         if (isError.get()) {
-            bot.sendText(message.getChatId(), "Неверный формат сообщения");
+            messenger.sendText(message.getChatId(), "Неверный формат сообщения");
             return false;
         }
         StringBuilder textToSend = new StringBuilder("Добавлены группы турнира: ");
@@ -46,7 +46,7 @@ public class TournamentMessageHandler extends AbstractMessageHandler {
                 }
         );
 
-        bot.sendText(message.getChatId(), textToSend.toString().trim());
+        messenger.sendText(message.getChatId(), textToSend.toString().trim());
         return true;
     }
 }

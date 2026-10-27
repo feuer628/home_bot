@@ -14,12 +14,43 @@ spring:
 
 token:
 telegram:
+  # Отключить транспорт Telegram (только Макс) можно флагом enabled: false
+  enabled: false
   proxy:
     enabled: true
     host:
     port:
     user:
     password:
+  # Релей к api.telegram.org через Cloudflare Worker.
+  # base-url: https://<worker>.<account>.workers.dev
+  # secret:   значение RELAY_SECRET, заданное в настройках Worker
+  # Если base-url пустой — используется официальный api.telegram.org.
+  api:
+    base-url:
+    secret:
+
+max:
+  # Транспорт Макса (https://dev.max.ru/docs-api).
+  # Включается флагом enabled: true при заданном токене бота.
+  enabled: true
+  # Токен бота Макса (Чат-боты -> Настройки на https://business.max.ru/self)
+  token:
+  base-url: https://platform-api2.max.ru
+  # Тайм-аут долгого опроса, сек
+  poll-timeout: 30
+
+bot:
+  # Ключи супер-администраторов вида "tg:410563696" / "mx:123456"
+  super-admins: tg:410563696,mx:89148655
+
+alice:
+  # Голосовые сообщения из Макса:
+  #   original — воспроизводить оригинальную запись на колонке
+  #              (через вебхук alice_play_audio_secret, только локальный режим
+  #               и форматы AAC/FLAC/MP3);
+  #   tts      — озвучивать распознанный текст голосом Алисы (работает всегда).
+  voice-mode: original
 
 server:
   port: 8081

@@ -1,9 +1,9 @@
 package com.cheremnov.bot.messages;
 
-import com.cheremnov.bot.Bot;
 import com.cheremnov.bot.db.subscibers.Subscriber;
 import com.cheremnov.bot.db.subscibers.SubscriberRepository;
 import com.cheremnov.bot.db.trusted_user.TrustedUserRepository;
+import com.cheremnov.bot.messenger.Messenger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,7 @@ import java.util.List;
 public class MessageSender {
 
     @Autowired
-    private Bot bot;
+    private Messenger messenger;
 
     @Autowired
     private TrustedUserRepository trustedUserRepository;
@@ -28,7 +28,7 @@ public class MessageSender {
         });
     }
 
-    public void sendSubscribers(String message, List<Long> subscriberIds) {
+    public void sendSubscribers(String message, List<String> subscriberIds) {
         if (subscriberIds != null) {
             subscriberRepository.findAllById(subscriberIds).forEach(subscriber -> sendToSubscriber(subscriber, message));
         }
@@ -40,7 +40,7 @@ public class MessageSender {
 
     private void sendToSubscriber(Subscriber subscriber, String message) {
         if (subscriber.getChatId() != null) {
-            bot.sendText(subscriber.getChatId(), message);
+            messenger.sendText(subscriber.getChatId(), message);
         }
     }
 }

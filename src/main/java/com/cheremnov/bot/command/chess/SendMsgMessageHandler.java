@@ -1,12 +1,10 @@
 package com.cheremnov.bot.command.chess;
 
-import com.cheremnov.bot.Bot;
+import com.cheremnov.bot.messenger.Messenger;
+import com.cheremnov.bot.messenger.MsgMessage;
 import com.cheremnov.bot.command.AbstractMessageHandler;
-import com.cheremnov.bot.messages.MessageSender;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.List;
 
@@ -14,15 +12,12 @@ import java.util.List;
 public class SendMsgMessageHandler extends AbstractMessageHandler {
 
     @Setter
-    private List<Long> subscriberChatIds;
-
-    @Autowired
-    private MessageSender messageSender;
+    private List<String> subscriberChatIds;
 
     @Override
-    public boolean handleMessage(Message message, Bot bot) {
+    public boolean handleMessage(MsgMessage message, Messenger messenger) {
         if (subscriberChatIds != null) {
-            subscriberChatIds.forEach(chatId -> bot.sendText(chatId, message.getText()));
+            subscriberChatIds.forEach(chatId -> messenger.sendText(chatId, message.getText()));
         }
         return true;
     }

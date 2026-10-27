@@ -11,8 +11,16 @@ import lombok.Data;
 @Data
 public class TrustedUser implements PageableModel {
 
+    /**
+     * Ключ пользователя вида "tg:410563696" / "mx:123456".
+     */
     @Id
-    private Long id;
+    private String id;
 
     private String name;
+
+    @Override
+    public String getKey() {
+        return id;
+    }
 }

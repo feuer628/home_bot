@@ -8,10 +8,16 @@ import lombok.Data;
 @Data
 public class Subscriber {
 
+    /**
+     * Ключ пользователя вида "tg:410563696" / "mx:123456".
+     */
     @Id
-    private long id;
+    private String id;
 
     private String name;
 
-    private Long chatId;
+    /**
+     * Ключ чата для уведомлений вида "tg:123" / "mx:c123" / "mx:u123".
+     */
+    private String chatId;
 }

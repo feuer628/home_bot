@@ -1,6 +1,7 @@
 package com.cheremnov.bot.command.chess;
 
 import com.cheremnov.bot.command.PageableModel;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,9 +24,18 @@ public class GroupTour implements PageableModel {
 
     private int currentTour;
 
-    private List<Long> subscriberChatIds;
+    /**
+     * Ключи чатов подписчиков вида "tg:123" / "mx:c123" / "mx:u123".
+     */
+    @ElementCollection
+    private List<String> subscriberChatIds;
 
     public String getNameWithCount() {
         return name + " (" + tourCount + ")";
+    }
+
+    @Override
+    public String getKey() {
+        return String.valueOf(id);
     }
 }

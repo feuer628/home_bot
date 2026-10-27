@@ -1,9 +1,9 @@
 package com.cheremnov.bot.command.chess;
 
-import com.cheremnov.bot.Bot;
+import com.cheremnov.bot.messenger.Messenger;
+import com.cheremnov.bot.messenger.MsgCallback;
 import com.cheremnov.bot.command.AbstractCallbackHandler;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
 @Component
 public class GroupListCallback extends AbstractCallbackHandler {
@@ -13,9 +13,10 @@ public class GroupListCallback extends AbstractCallbackHandler {
     }
 
     @Override
-    public void handleCallback(CallbackQuery callback, Bot bot) {
+    public void handleCallback(MsgCallback callback, Messenger messenger) {
         GroupListCommand groupListCommand = getBean(GroupListCommand.class);
-        bot.editMessageText(callback.getMessage().getChatId(), callback.getMessage().getMessageId(), groupListCommand.getCommandDescription(), groupListCommand.getInlineKeyboard(Integer.parseInt(getCallbackInfo(callback))));
-        bot.answerCallback(callback);
+        messenger.editMessageText(callback.getMessage().getChatId(), callback.getMessage().getMessageId(),
+                groupListCommand.getCommandDescription(), groupListCommand.getInlineKeyboard(Integer.parseInt(getCallbackInfo(callback))));
+        messenger.answerCallback(callback);
     }
 }

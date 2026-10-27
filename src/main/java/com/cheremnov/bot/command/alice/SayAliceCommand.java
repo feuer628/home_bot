@@ -1,12 +1,12 @@
 package com.cheremnov.bot.command.alice;
 
-import com.cheremnov.bot.Bot;
+import com.cheremnov.bot.messenger.KeyButton;
+import com.cheremnov.bot.messenger.Keyboard;
+import com.cheremnov.bot.messenger.Messenger;
+import com.cheremnov.bot.messenger.MsgMessage;
 import com.cheremnov.bot.alice.Alice;
 import com.cheremnov.bot.command.AbstractCommandHandler;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,18 +26,16 @@ public class SayAliceCommand extends AbstractCommandHandler {
     }
 
     @Override
-    public void handleCommand(Message message, Bot bot) {
-        bot.sendText(message.getChatId(), "Выберете куда хотите отправить сообщение", getInlineBottoms());
+    public void handleCommand(MsgMessage message, Messenger messenger) {
+        messenger.sendText(message.getChatId(), "Выберете куда хотите отправить сообщение", getInlineBottoms());
     }
 
-    private InlineKeyboardMarkup getInlineBottoms() {
-        InlineKeyboardMarkup markupKeyboard = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+    private Keyboard getInlineBottoms() {
+        List<List<KeyButton>> keyboard = new ArrayList<>();
         for (Alice alice : Alice.values()) {
             keyboard.add(Collections.singletonList(getBean(SayAliceCallback.class).getInlineButton(alice.getName(), alice.name())));
         }
         keyboard.add(Collections.singletonList(getBean(SayAliceCallback.class).getInlineButton("На все", "all")));
-        markupKeyboard.setKeyboard(keyboard);
-        return markupKeyboard;
+        return Keyboard.of(keyboard);
     }
 }
