@@ -49,6 +49,25 @@ public class MaxTransport implements MessageTransport {
     /** Ключ собственного пользователя бота ("mx:<id>"), определяется через GET /me. */
     private volatile String selfUserKey;
 
+    /**
+     * mid «слота команд» — служебного сообщения, которое виджет перезаписывает
+     * командой ("/widget ..."), а бот опрашивает его содержимое.
+     * Пустое значение — опрос слота выключен.
+     */
+    @Value("${max.widget-slot-mid:}")
+    private String widgetSlotMid;
+
+    /** Период опроса слота команд, мс. */
+    @Value("${max.widget-slot-poll-ms:1500}")
+    private long widgetSlotPollMs;
+
+    private final java.util.concurrent.ScheduledExecutorService slotScheduler =
+            java.util.concurrent.Executors.newSingleThreadScheduledExecutor(runnable -> {
+                Thread thread = new Thread(runnable, "max-widget-slot");
+                thread.setDaemon(true);
+                return thread;
+            });
+
     public MaxTransport(@Value("${max.enabled:false}") boolean enabled,
                         @Value("${max.token:}") String token,
                         @Value("${max.base-url:https://platform-api2.max.ru}") String baseUrl,
@@ -104,6 +123,47 @@ public class MaxTransport implements MessageTransport {
         thread.setDaemon(true);
         thread.start();
         log.info("Транспорт Макса запущен (long polling, timeout={}с)", pollTimeoutSec);
+        if (widgetSlotMid != null && !widgetSlotMid.isBlank()) {
+            slotScheduler.scheduleWithFixedDelay(this::pollWidgetSlot,
+                    widgetSlotPollMs, widgetSlotPollMs, TimeUnit.MILLISECONDS);
+            log.info("Слот команд виджета опрашивается каждые {} мс: {}", widgetSlotPollMs, widgetSlotMid.trim());
+        }
+    }
+
+    /**
+     * Опрос «слота команд»: виджет перезаписывает текст слота командой
+     * (PUT /messages — это разрешено держателю токена), бот её выполняет.
+     * Событй на такие действия Макс не шлёт, поэтому используется опрос.
+     */
+    private void pollWidgetSlot() {
+        if (listener == null) {
+            return;
+        }
+        String slotMid = widgetSlotMid.trim();
+        try {
+            MaxMessage slot = api.getMessage(slotMid);
+            String text = slot.getBody() == null ? null : slot.getBody().getText();
+            if (text == null || !text.trim().startsWith("/")) {
+                return;
+            }
+            String command = text.trim();
+            log.info("Команда из слота виджета: {}", command);
+            MsgMessage message = toMsgMessage(slot);
+            try {
+                listener.onMessage(message);
+            } finally {
+                // сбрасываем слот, чтобы команда не выполнилась повторно
+                try {
+                    api.editMessageText(slotMid,
+                            "Последняя команда: " + command
+                                    + "\nОбработана в " + java.time.LocalTime.now().withNano(0), null);
+                } catch (Exception e) {
+                    log.warn("Не удалось сбросить слот команд: {}", e.getMessage());
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Ошибка опроса слота команд: {}", e.getMessage());
+        }
     }
 
     private void pollLoop() {

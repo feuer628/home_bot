@@ -89,16 +89,11 @@ public class MessengerService implements Messenger, TransportListener {
     public void onMessage(MsgMessage message) {
         String text = message.hasText() ? message.getText().trim() : "";
         if (message.getFrom() != null && message.getFrom().isBot()) {
-            // Макс доставляет боту и его собственные сообщения.
-            // Служебные команды самого бота (например, /widget от виджета) —
-            // обрабатываем, всё остальное от ботов игнорируем,
-            // иначе сообщение-эхо «съедает» диалоговый обработчик
-            if (!text.startsWith("/")) {
+            // Макс доставляет боту и его собственные сообщения (эхо) — игнорируем,
+            // кроме служебных команд самого бота (/widget из слота виджета),
+            // иначе эхо «съедает» диалоговый обработчик
+            if (!text.startsWith("/") || !isSelfMessage(message)) {
                 log.debug("Пропущено сообщение от бота: {}", text);
-                return;
-            }
-            if (!isSelfBotMessage(message)) {
-                log.warn("Пропущена команда от чужого бота: {}", text);
                 return;
             }
         }
@@ -118,10 +113,14 @@ public class MessengerService implements Messenger, TransportListener {
         }
     }
 
-    private boolean isSelfBotMessage(MsgMessage message) {
+    private boolean isSelfMessage(MsgMessage message) {
+        String fromKey = message.getFrom() == null ? null : message.getFrom().getId();
+        if (fromKey == null) {
+            return false;
+        }
         MessageTransport transport = transportFor(message.getChatId());
         String selfKey = transport == null ? null : transport.selfUserKey();
-        return selfKey != null && message.getFrom() != null && selfKey.equals(message.getFrom().getId());
+        return fromKey.equals(selfKey);
     }
 
     @Override

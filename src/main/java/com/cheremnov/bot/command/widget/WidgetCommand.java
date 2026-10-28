@@ -5,16 +5,18 @@ import com.cheremnov.bot.command.door.TuyaAdapter;
 import com.cheremnov.bot.messenger.Messenger;
 import com.cheremnov.bot.messenger.MsgMessage;
 import com.cheremnov.bot.messenger.MsgUser;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**
  * Служебные команды удалённого управления (например, с Android-виджета).
- * Виджет шлёт сообщение "/widget &lt;действие&gt;" через API Макса от имени бота,
- * команда выполняется здесь, результат пишется в чат.
+ * Виджет перезаписывает текст слота командой "/widget &lt;действие&gt;",
+ * команда выполняется здесь, результат пишется только в лог.
  *
- * Доступна только вызовам от самого бота (отправитель — бот):
- * обычным пользователям и чужим ботам отвечает отказом.
+ * Доступна только вызовам от ботов из белого списка (см. bot.widget-bots):
+ * обычным пользователям отвечает отказом.
  */
+@Slf4j
 @Component
 public class WidgetCommand extends AbstractCommandHandler {
 
@@ -73,17 +75,18 @@ public class WidgetCommand extends AbstractCommandHandler {
                     description = "Калитка открыта";
                 }
                 default -> {
-                    messenger.sendText(message.getChatId(), "Неизвестная команда виджета: " + action);
+                    log.warn("Неизвестная команда виджета: {}", action);
                     return;
                 }
             }
+            // результат — только в лог, в чат ничего не отправляем
             if (success) {
-                messenger.sendText(message.getChatId(), "✅ " + description);
+                log.info("Виджет: {} -> {}", action, description);
             } else {
-                messenger.sendText(message.getChatId(), "❌ Не выполнено: " + description);
+                log.warn("Виджет: {} -> не выполнено", action);
             }
         } catch (Exception e) {
-            messenger.sendText(message.getChatId(), "❌ Ошибка: " + e.getMessage());
+            log.error("Виджет: {} -> ошибка: {}", action, e.getMessage());
         }
     }
 }
